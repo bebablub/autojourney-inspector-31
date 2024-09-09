@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import Navigation from '../components/Navigation';
 import ValueSectionDropdown from '../components/ValueSectionDropdown';
+import CarReportInfoConfig from '../components/CarReportInfoConfig';
 
 const Customize = () => {
   const [selectedModules, setSelectedModules] = useState({
@@ -51,23 +52,55 @@ const Customize = () => {
           ))}
         </div>
 
+        {selectedModules.carAndReportBasicInfo && (
+          <CarReportInfoConfig />
+        )}
+
         {selectedModules.safetyValues && (
-          <ValueSectionDropdown title="Safety Values" />
+          <ValueSectionDropdown 
+            title="Safety Values" 
+            defaultValues={[
+              'Insulation resistance',
+              'HV interlock',
+              'Isolation monitoring',
+              'Potential equalization',
+              'HV system status'
+            ]}
+          />
         )}
 
         {selectedModules.batteryValues && (
-          <ValueSectionDropdown title="Battery Values" />
+          <ValueSectionDropdown 
+            title="Battery Values" 
+            defaultValues={[
+              'State of Charge (SoC)',
+              'State of Health (SoH)',
+              'Cell voltages',
+              'Temperature distribution',
+              'Capacity',
+              'Internal resistance'
+            ]}
+          />
         )}
 
         {selectedModules.troubleCodes && (
-          <ValueSectionDropdown title="Trouble Codes" />
+          <ValueSectionDropdown 
+            title="Trouble Codes" 
+            defaultValues={[
+              'Active DTCs',
+              'Pending DTCs',
+              'Permanent DTCs',
+              'DTC description',
+              'Freeze frame data'
+            ]}
+          />
         )}
 
         {selectedModules.compactOverview && (
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <h2 className="text-xl font-semibold mb-4">Configure Overview Logic</h2>
             <Input
-              placeholder="Enter logic for overview generation"
+              placeholder="Enter logic for overview generation (e.g., SoC > 80% && InsulationResistance > 100 kΩ)"
               value={overviewLogic}
               onChange={(e) => setOverviewLogic(e.target.value)}
               className="mb-4"

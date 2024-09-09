@@ -3,17 +3,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const ValueSectionDropdown = ({ title }) => {
+const ValueSectionDropdown = ({ title, defaultValues }) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [customValue, setCustomValue] = useState('');
-
-  const defaultValues = [
-    'Value 1',
-    'Value 2',
-    'Value 3',
-    'Value 4',
-    'Value 5',
-  ];
 
   const handleValueChange = (value) => {
     setSelectedValues(prev =>
