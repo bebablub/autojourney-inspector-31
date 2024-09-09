@@ -6,6 +6,8 @@ import CarReportInfoConfig from '../components/CarReportInfoConfig';
 import PDFPreview from '../components/PDFPreview';
 import ModuleSelection from '../components/ModuleSelection';
 import OverviewLogicConfig from '../components/OverviewLogicConfig';
+import HVCheckProtocolConfig from '../components/HVCheckProtocolConfig';
+import ResultPresentationConfig from '../components/ResultPresentationConfig';
 
 const Customize = () => {
   const [selectedModules, setSelectedModules] = useState({
@@ -18,9 +20,16 @@ const Customize = () => {
   });
 
   const [overviewLogic, setOverviewLogic] = useState('');
+  const [hvCheckProtocol, setHVCheckProtocol] = useState('vci');
+  const [resultPresentation, setResultPresentation] = useState(['ui']);
 
   const handleSave = () => {
-    console.log('Saved configuration:', { selectedModules, overviewLogic });
+    console.log('Saved configuration:', { 
+      selectedModules, 
+      overviewLogic, 
+      hvCheckProtocol, 
+      resultPresentation 
+    });
     // Here you would typically send this data to your backend or state management system
   };
 
@@ -79,6 +88,13 @@ const Customize = () => {
             {selectedModules.compactOverview && (
               <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
             )}
+            
+            <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
+            
+            <ResultPresentationConfig 
+              presentation={resultPresentation} 
+              setPresentation={setResultPresentation} 
+            />
             
             <Button onClick={handleSave} className="mt-4">Save Configuration</Button>
           </div>
