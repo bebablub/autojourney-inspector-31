@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import Navigation from '../components/Navigation';
 import ValueSectionDropdown from '../components/ValueSectionDropdown';
 import CarReportInfoConfig from '../components/CarReportInfoConfig';
+import PDFPreview from '../components/PDFPreview';
+import ModuleSelection from '../components/ModuleSelection';
+import OverviewLogicConfig from '../components/OverviewLogicConfig';
 
 const Customize = () => {
   const [selectedModules, setSelectedModules] = useState({
@@ -18,13 +19,6 @@ const Customize = () => {
 
   const [overviewLogic, setOverviewLogic] = useState('');
 
-  const handleModuleChange = (moduleName) => {
-    setSelectedModules(prev => ({
-      ...prev,
-      [moduleName]: !prev[moduleName]
-    }));
-  };
-
   const handleSave = () => {
     console.log('Saved configuration:', { selectedModules, overviewLogic });
     // Here you would typically send this data to your backend or state management system
@@ -36,79 +30,63 @@ const Customize = () => {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Customize HV-Check Report</h1>
         
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Select Modules</h2>
-          {Object.entries(selectedModules).map(([key, value]) => (
-            <div key={key} className="flex items-center mb-2">
-              <Checkbox
-                id={key}
-                checked={value}
-                onCheckedChange={() => handleModuleChange(key)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+            
+            {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
+            
+            {selectedModules.safetyValues && (
+              <ValueSectionDropdown 
+                title="Safety Values" 
+                defaultValues={[
+                  'Insulation resistance',
+                  'HV interlock',
+                  'Isolation monitoring',
+                  'Potential equalization',
+                  'HV system status'
+                ]}
               />
-              <label htmlFor={key} className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {key.split(/(?=[A-Z])/).join(" ")}
-              </label>
-            </div>
-          ))}
-        </div>
-
-        {selectedModules.carAndReportBasicInfo && (
-          <CarReportInfoConfig />
-        )}
-
-        {selectedModules.safetyValues && (
-          <ValueSectionDropdown 
-            title="Safety Values" 
-            defaultValues={[
-              'Insulation resistance',
-              'HV interlock',
-              'Isolation monitoring',
-              'Potential equalization',
-              'HV system status'
-            ]}
-          />
-        )}
-
-        {selectedModules.batteryValues && (
-          <ValueSectionDropdown 
-            title="Battery Values" 
-            defaultValues={[
-              'State of Charge (SoC)',
-              'State of Health (SoH)',
-              'Cell voltages',
-              'Temperature distribution',
-              'Capacity',
-              'Internal resistance'
-            ]}
-          />
-        )}
-
-        {selectedModules.troubleCodes && (
-          <ValueSectionDropdown 
-            title="Trouble Codes" 
-            defaultValues={[
-              'Active DTCs',
-              'Pending DTCs',
-              'Permanent DTCs',
-              'DTC description',
-              'Freeze frame data'
-            ]}
-          />
-        )}
-
-        {selectedModules.compactOverview && (
-          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-xl font-semibold mb-4">Configure Overview Logic</h2>
-            <Input
-              placeholder="Enter logic for overview generation (e.g., SoC > 80% && InsulationResistance > 100 kΩ)"
-              value={overviewLogic}
-              onChange={(e) => setOverviewLogic(e.target.value)}
-              className="mb-4"
-            />
+            )}
+            
+            {selectedModules.batteryValues && (
+              <ValueSectionDropdown 
+                title="Battery Values" 
+                defaultValues={[
+                  'State of Charge (SoC)',
+                  'State of Health (SoH)',
+                  'Cell voltages',
+                  'Temperature distribution',
+                  'Capacity',
+                  'Internal resistance'
+                ]}
+              />
+            )}
+            
+            {selectedModules.troubleCodes && (
+              <ValueSectionDropdown 
+                title="Trouble Codes" 
+                defaultValues={[
+                  'Active DTCs',
+                  'Pending DTCs',
+                  'Permanent DTCs',
+                  'DTC description',
+                  'Freeze frame data'
+                ]}
+              />
+            )}
+            
+            {selectedModules.compactOverview && (
+              <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
+            )}
+            
+            <Button onClick={handleSave} className="mt-4">Save Configuration</Button>
           </div>
-        )}
-
-        <Button onClick={handleSave} className="mt-4">Save Configuration</Button>
+          
+          <div>
+            <PDFPreview selectedModules={selectedModules} />
+          </div>
+        </div>
       </div>
     </div>
   );
