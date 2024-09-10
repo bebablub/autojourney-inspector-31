@@ -10,7 +10,6 @@ import OverviewLogicConfig from '../components/OverviewLogicConfig';
 import HVCheckProtocolConfig from '../components/HVCheckProtocolConfig';
 import ResultPresentationConfig from '../components/ResultPresentationConfig';
 import ConfettiAnimation from '../components/ConfettiAnimation';
-import TriggerGuidance from '../components/TriggerGuidance';
 import ManipulationReportConfig from '../components/ManipulationReportConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
 import { useGame } from '../contexts/GameContext';
@@ -68,15 +67,14 @@ const Customize = () => {
     >
       <h1 className="text-3xl font-bold">Customize HV-Check</h1>
       
-      <Tabs defaultValue="trigger" className="w-full">
+      <Tabs defaultValue="protocol" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="trigger">Trigger Guidance</TabsTrigger>
+          <TabsTrigger value="protocol">HV-Check Protocol</TabsTrigger>
           <TabsTrigger value="hvcheck">HV-Check Report</TabsTrigger>
           <TabsTrigger value="manipulation">Manipulation Report</TabsTrigger>
           <TabsTrigger value="visualization">Visualization</TabsTrigger>
         </TabsList>
-        <TabsContent value="trigger">
-          <TriggerGuidance />
+        <TabsContent value="protocol">
           <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
         </TabsContent>
         <TabsContent value="hvcheck">
