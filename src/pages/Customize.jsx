@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from 'framer-motion';
 import ValueSectionDropdown from '../components/ValueSectionDropdown';
 import CarReportInfoConfig from '../components/CarReportInfoConfig';
@@ -9,6 +10,9 @@ import OverviewLogicConfig from '../components/OverviewLogicConfig';
 import HVCheckProtocolConfig from '../components/HVCheckProtocolConfig';
 import ResultPresentationConfig from '../components/ResultPresentationConfig';
 import ConfettiAnimation from '../components/ConfettiAnimation';
+import TriggerGuidance from '../components/TriggerGuidance';
+import ManipulationReportConfig from '../components/ManipulationReportConfig';
+import VisualizationConfig from '../components/VisualizationConfig';
 import { useGame } from '../contexts/GameContext';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -62,77 +66,88 @@ const Customize = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h1 className="text-3xl font-bold">Customize HV-Check Report</h1>
+      <h1 className="text-3xl font-bold">Customize HV-Check</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
-          
-          {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
-          
-          {selectedModules.safetyValues && (
-            <ValueSectionDropdown 
-              title="Safety Values" 
-              defaultValues={[
-                'Insulation resistance',
-                'HV interlock',
-                'Isolation monitoring',
-                'Potential equalization',
-                'HV system status'
-              ]}
-            />
-          )}
-          
-          {selectedModules.batteryValues && (
-            <ValueSectionDropdown 
-              title="Battery Values" 
-              defaultValues={[
-                'State of Charge (SoC)',
-                'State of Health (SoH)',
-                'Cell voltages',
-                'Temperature distribution',
-                'Capacity',
-                'Internal resistance'
-              ]}
-            />
-          )}
-          
-          {selectedModules.troubleCodes && (
-            <ValueSectionDropdown 
-              title="Trouble Codes" 
-              defaultValues={[
-                'Active DTCs',
-                'Pending DTCs',
-                'Permanent DTCs',
-                'DTC description',
-                'Freeze frame data'
-              ]}
-            />
-          )}
-          
-          {selectedModules.compactOverview && (
-            <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
-          )}
-          
-          <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
-          
-          <ResultPresentationConfig 
+      <Tabs defaultValue="trigger" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="trigger">Trigger Guidance</TabsTrigger>
+          <TabsTrigger value="hvcheck">HV-Check Report</TabsTrigger>
+          <TabsTrigger value="manipulation">Manipulation Report</TabsTrigger>
+          <TabsTrigger value="visualization">Visualization</TabsTrigger>
+        </TabsList>
+        <TabsContent value="trigger">
+          <TriggerGuidance />
+        </TabsContent>
+        <TabsContent value="hvcheck">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+              {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
+              {selectedModules.safetyValues && (
+                <ValueSectionDropdown 
+                  title="Safety Values" 
+                  defaultValues={[
+                    'Insulation resistance',
+                    'HV interlock',
+                    'Isolation monitoring',
+                    'Potential equalization',
+                    'HV system status'
+                  ]}
+                />
+              )}
+              {selectedModules.batteryValues && (
+                <ValueSectionDropdown 
+                  title="Battery Values" 
+                  defaultValues={[
+                    'State of Charge (SoC)',
+                    'State of Health (SoH)',
+                    'Cell voltages',
+                    'Temperature distribution',
+                    'Capacity',
+                    'Internal resistance'
+                  ]}
+                />
+              )}
+              {selectedModules.troubleCodes && (
+                <ValueSectionDropdown 
+                  title="Trouble Codes" 
+                  defaultValues={[
+                    'Active DTCs',
+                    'Pending DTCs',
+                    'Permanent DTCs',
+                    'DTC description',
+                    'Freeze frame data'
+                  ]}
+                />
+              )}
+              {selectedModules.compactOverview && (
+                <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
+              )}
+              <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
+            </div>
+            <div>
+              <PDFPreview selectedModules={selectedModules} />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="manipulation">
+          <ManipulationReportConfig />
+        </TabsContent>
+        <TabsContent value="visualization">
+          <VisualizationConfig 
             presentation={resultPresentation} 
             setPresentation={setResultPresentation} 
           />
-          
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button onClick={handleSave} className="w-full">Save Configuration</Button>
-          </motion.div>
-        </div>
-        
-        <div>
-          <PDFPreview selectedModules={selectedModules} />
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
+      
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Button onClick={handleSave} className="w-full">Save Configuration</Button>
+      </motion.div>
+      
       {showConfetti && <ConfettiAnimation />}
     </motion.div>
   );
