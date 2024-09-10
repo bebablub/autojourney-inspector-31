@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from 'react-router-dom';
+import CelebrationPopup from '../components/CelebrationPopup';
 
 const StartCheck = () => {
   const [progress, setProgress] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const navigate = useNavigate();
 
   const startHVCheck = () => {
@@ -17,12 +19,17 @@ const StartCheck = () => {
         if (prevProgress >= 100) {
           clearInterval(interval);
           setIsChecking(false);
-          navigate('/reports');
+          setShowCelebration(true);
           return 100;
         }
         return prevProgress + 10;
       });
     }, 500);
+  };
+
+  const handleCloseCelebration = () => {
+    setShowCelebration(false);
+    navigate('/reports');
   };
 
   return (
@@ -42,6 +49,8 @@ const StartCheck = () => {
           <p className="text-center">Progress: {progress}%</p>
         </div>
       )}
+
+      <CelebrationPopup isOpen={showCelebration} onClose={handleCloseCelebration} />
     </div>
   );
 };
