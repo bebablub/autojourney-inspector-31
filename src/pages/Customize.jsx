@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { motion } from 'framer-motion';
 import ValueSectionDropdown from '../components/ValueSectionDropdown';
 import CarReportInfoConfig from '../components/CarReportInfoConfig';
 import PDFPreview from '../components/PDFPreview';
@@ -7,6 +8,9 @@ import ModuleSelection from '../components/ModuleSelection';
 import OverviewLogicConfig from '../components/OverviewLogicConfig';
 import HVCheckProtocolConfig from '../components/HVCheckProtocolConfig';
 import ResultPresentationConfig from '../components/ResultPresentationConfig';
+import ConfettiAnimation from '../components/ConfettiAnimation';
+import { useGame } from '../contexts/GameContext';
+import { useToast } from "@/components/ui/use-toast";
 
 const Customize = () => {
   const [selectedModules, setSelectedModules] = useState({
@@ -21,6 +25,10 @@ const Customize = () => {
   const [overviewLogic, setOverviewLogic] = useState('');
   const [hvCheckProtocol, setHVCheckProtocol] = useState('vci');
   const [resultPresentation, setResultPresentation] = useState(['ui']);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const { incrementConfigSaves, configSaves } = useGame();
+  const { toast } = useToast();
 
   const handleSave = () => {
     console.log('Saved configuration:', { 
@@ -29,11 +37,31 @@ const Customize = () => {
       hvCheckProtocol, 
       resultPresentation 
     });
-    // Here you would typically send this data to your backend or state management system
+    incrementConfigSaves();
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
+
+    toast({
+      title: "Configuration Saved!",
+      description: `You've saved ${configSaves + 1} configurations. Keep it up!`,
+    });
+
+    if (configSaves + 1 === 5) {
+      toast({
+        title: "Achievement Unlocked!",
+        description: "Configuration Master - You've saved 5 configurations!",
+        variant: "success",
+      });
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       <h1 className="text-3xl font-bold">Customize HV-Check Report</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -93,14 +121,20 @@ const Customize = () => {
             setPresentation={setResultPresentation} 
           />
           
-          <Button onClick={handleSave} className="w-full">Save Configuration</Button>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button onClick={handleSave} className="w-full">Save Configuration</Button>
+          </motion.div>
         </div>
         
         <div>
           <PDFPreview selectedModules={selectedModules} />
         </div>
       </div>
-    </div>
+      {showConfetti && <ConfettiAnimation />}
+    </motion.div>
   );
 };
 
