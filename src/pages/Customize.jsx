@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import Navigation from '../components/Navigation';
 import ValueSectionDropdown from '../components/ValueSectionDropdown';
 import CarReportInfoConfig from '../components/CarReportInfoConfig';
 import PDFPreview from '../components/PDFPreview';
@@ -34,74 +33,71 @@ const Customize = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Customize HV-Check Report</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
-            
-            {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
-            
-            {selectedModules.safetyValues && (
-              <ValueSectionDropdown 
-                title="Safety Values" 
-                defaultValues={[
-                  'Insulation resistance',
-                  'HV interlock',
-                  'Isolation monitoring',
-                  'Potential equalization',
-                  'HV system status'
-                ]}
-              />
-            )}
-            
-            {selectedModules.batteryValues && (
-              <ValueSectionDropdown 
-                title="Battery Values" 
-                defaultValues={[
-                  'State of Charge (SoC)',
-                  'State of Health (SoH)',
-                  'Cell voltages',
-                  'Temperature distribution',
-                  'Capacity',
-                  'Internal resistance'
-                ]}
-              />
-            )}
-            
-            {selectedModules.troubleCodes && (
-              <ValueSectionDropdown 
-                title="Trouble Codes" 
-                defaultValues={[
-                  'Active DTCs',
-                  'Pending DTCs',
-                  'Permanent DTCs',
-                  'DTC description',
-                  'Freeze frame data'
-                ]}
-              />
-            )}
-            
-            {selectedModules.compactOverview && (
-              <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
-            )}
-            
-            <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
-            
-            <ResultPresentationConfig 
-              presentation={resultPresentation} 
-              setPresentation={setResultPresentation} 
-            />
-            
-            <Button onClick={handleSave} className="mt-4">Save Configuration</Button>
-          </div>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Customize HV-Check Report</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
           
-          <div>
-            <PDFPreview selectedModules={selectedModules} />
-          </div>
+          {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
+          
+          {selectedModules.safetyValues && (
+            <ValueSectionDropdown 
+              title="Safety Values" 
+              defaultValues={[
+                'Insulation resistance',
+                'HV interlock',
+                'Isolation monitoring',
+                'Potential equalization',
+                'HV system status'
+              ]}
+            />
+          )}
+          
+          {selectedModules.batteryValues && (
+            <ValueSectionDropdown 
+              title="Battery Values" 
+              defaultValues={[
+                'State of Charge (SoC)',
+                'State of Health (SoH)',
+                'Cell voltages',
+                'Temperature distribution',
+                'Capacity',
+                'Internal resistance'
+              ]}
+            />
+          )}
+          
+          {selectedModules.troubleCodes && (
+            <ValueSectionDropdown 
+              title="Trouble Codes" 
+              defaultValues={[
+                'Active DTCs',
+                'Pending DTCs',
+                'Permanent DTCs',
+                'DTC description',
+                'Freeze frame data'
+              ]}
+            />
+          )}
+          
+          {selectedModules.compactOverview && (
+            <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
+          )}
+          
+          <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
+          
+          <ResultPresentationConfig 
+            presentation={resultPresentation} 
+            setPresentation={setResultPresentation} 
+          />
+          
+          <Button onClick={handleSave} className="w-full">Save Configuration</Button>
+        </div>
+        
+        <div>
+          <PDFPreview selectedModules={selectedModules} />
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import Navigation from '../components/Navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
@@ -11,37 +10,34 @@ const sampleReports = [
 
 const Reports = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">HV-Check Reports</h1>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Report ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Make</TableHead>
-              <TableHead>Model</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Action</TableHead>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">HV-Check Reports</h1>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Report ID</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Make</TableHead>
+            <TableHead>Model</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sampleReports.map((report) => (
+            <TableRow key={report.id}>
+              <TableCell>{report.id}</TableCell>
+              <TableCell>{report.date}</TableCell>
+              <TableCell>{report.make}</TableCell>
+              <TableCell>{report.model}</TableCell>
+              <TableCell>{report.status}</TableCell>
+              <TableCell>
+                <Button variant="outline">View Report</Button>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sampleReports.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell>{report.id}</TableCell>
-                <TableCell>{report.date}</TableCell>
-                <TableCell>{report.make}</TableCell>
-                <TableCell>{report.model}</TableCell>
-                <TableCell>{report.status}</TableCell>
-                <TableCell>
-                  <Button variant="outline">View Report</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };

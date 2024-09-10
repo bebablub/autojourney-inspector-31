@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Navigation from '../components/Navigation';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from 'react-router-dom';
@@ -27,23 +26,22 @@ const StartCheck = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Start HV-Check</h1>
-        <p className="mb-4">Click the button below to start the HV-Check process.</p>
-        
-        <Button onClick={startHVCheck} disabled={isChecking}>
-          {isChecking ? 'Checking...' : 'Start HV-Check'}
-        </Button>
-        
-        {isChecking && (
-          <div className="mt-4">
-            <Progress value={progress} className="w-full" />
-            <p className="mt-2">Progress: {progress}%</p>
-          </div>
-        )}
-      </div>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Start HV-Check</h1>
+      <p className="text-xl text-gray-600">
+        Click the button below to start the HV-Check process.
+      </p>
+      
+      <Button onClick={startHVCheck} disabled={isChecking} className="w-full sm:w-auto">
+        {isChecking ? 'Checking...' : 'Start HV-Check'}
+      </Button>
+      
+      {isChecking && (
+        <div className="space-y-2">
+          <Progress value={progress} className="w-full" />
+          <p className="text-center">Progress: {progress}%</p>
+        </div>
+      )}
     </div>
   );
 };
