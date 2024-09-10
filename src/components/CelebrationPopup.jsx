@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-const CelebrationPopup = ({ isOpen, onClose }) => {
+const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -42,10 +42,18 @@ const CelebrationPopup = ({ isOpen, onClose }) => {
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-center text-gray-600"
+              className="text-center text-gray-600 mb-4"
             >
               Congratulations! Your HV-Check is complete and ready for review.
             </motion.p>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="flex justify-center space-x-4"
+            >
+              <Button onClick={onClose}>Close</Button>
+              <Button onClick={onShowMe} variant="outline">Show Me</Button>
+            </motion.div>
           </div>
         </motion.div>
       )}

@@ -29,6 +29,10 @@ const StartCheck = () => {
 
   const handleCloseCelebration = () => {
     setShowCelebration(false);
+  };
+
+  const handleShowMe = () => {
+    setShowCelebration(false);
     navigate('/reports');
   };
 
@@ -50,7 +54,11 @@ const StartCheck = () => {
         </div>
       )}
 
-      <CelebrationPopup isOpen={showCelebration} onClose={handleCloseCelebration} />
+      <CelebrationPopup 
+        isOpen={showCelebration} 
+        onClose={handleCloseCelebration}
+        onShowMe={handleShowMe}
+      />
     </div>
   );
 };
