@@ -77,6 +77,7 @@ const Customize = () => {
         </TabsList>
         <TabsContent value="trigger">
           <TriggerGuidance />
+          <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
         </TabsContent>
         <TabsContent value="hvcheck">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -123,7 +124,6 @@ const Customize = () => {
               {selectedModules.compactOverview && (
                 <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
               )}
-              <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
             </div>
             <div>
               <PDFPreview selectedModules={selectedModules} />
