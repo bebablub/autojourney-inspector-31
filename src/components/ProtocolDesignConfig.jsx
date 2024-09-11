@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -23,65 +21,55 @@ const SortableItem = ({ id, children }) => {
   );
 };
 
-const ProtocolDesignConfig = ({ selectedModules, setSelectedModules }) => {
-  const [logo, setLogo] = useState(null);
-  const [primaryColor, setPrimaryColor] = useState('#000000');
-  const [secondaryColor, setSecondaryColor] = useState('#ffffff');
+const ProtocolDesignConfig = ({ design, setDesign }) => {
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDesign({ ...design, logo: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setSelectedModules((items) => {
-        const oldIndex = Object.keys(items).indexOf(active.id);
-        const newIndex = Object.keys(items).indexOf(over.id);
+      setDesign((prev) => {
+        const oldIndex = prev.moduleOrder.indexOf(active.id);
+        const newIndex = prev.moduleOrder.indexOf(over.id);
         
-        const newOrder = arrayMove(Object.keys(items), oldIndex, newIndex);
-        const newItems = {};
-        newOrder.forEach(key => {
-          newItems[key] = items[key];
-        });
-        
-        return newItems;
+        return {
+          ...prev,
+          moduleOrder: arrayMove(prev.moduleOrder, oldIndex, newIndex),
+        };
       });
     }
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Protocol Design</CardTitle>
-          <CardDescription>Customize the appearance and order of your diagnostic protocol</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="logo">Upload Logo</Label>
-              <Input id="logo" type="file" onChange={(e) => setLogo(e.target.files[0])} />
-            </div>
-            <div>
-              <Label htmlFor="primaryColor">Primary Color</Label>
-              <Input id="primaryColor" type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="secondaryColor">Secondary Color</Label>
-              <Input id="secondaryColor" type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Module Order</CardTitle>
-          <CardDescription>Drag and drop to reorder modules</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="flex space-x-4">
+      <div className="w-1/2 space-y-4">
+        <div>
+          <Label htmlFor="logo">Upload Logo</Label>
+          <Input id="logo" type="file" onChange={handleLogoChange} accept="image/*" />
+        </div>
+        <div>
+          <Label htmlFor="primaryColor">Primary Color</Label>
+          <Input id="primaryColor" type="color" value={design.primaryColor} onChange={(e) => setDesign({ ...design, primaryColor: e.target.value })} />
+        </div>
+        <div>
+          <Label htmlFor="secondaryColor">Secondary Color</Label>
+          <Input id="secondaryColor" type="color" value={design.secondaryColor} onChange={(e) => setDesign({ ...design, secondaryColor: e.target.value })} />
+        </div>
+        <div>
+          <Label>Module Order</Label>
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={Object.keys(selectedModules)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={design.moduleOrder} strategy={verticalListSortingStrategy}>
               <ul className="space-y-2">
-                {Object.keys(selectedModules).map((key) => (
+                {design.moduleOrder.map((key) => (
                   <SortableItem key={key} id={key}>
                     {key.split(/(?=[A-Z])/).join(" ")}
                   </SortableItem>
@@ -89,23 +77,11 @@ const ProtocolDesignConfig = ({ selectedModules, setSelectedModules }) => {
               </ul>
             </SortableContext>
           </DndContext>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>PDF Preview</CardTitle>
-          <CardDescription>See how your protocol will look</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PDFPreview 
-            selectedModules={selectedModules} 
-            logo={logo} 
-            primaryColor={primaryColor} 
-            secondaryColor={secondaryColor} 
-          />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      <div className="w-1/2">
+        <PDFPreview design={design} />
+      </div>
     </div>
   );
 };

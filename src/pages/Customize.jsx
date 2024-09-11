@@ -1,48 +1,35 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from 'framer-motion';
-import ValueSectionDropdown from '../components/ValueSectionDropdown';
-import CarReportInfoConfig from '../components/CarReportInfoConfig';
-import PDFPreview from '../components/PDFPreview';
-import ModuleSelection from '../components/ModuleSelection';
-import OverviewLogicConfig from '../components/OverviewLogicConfig';
-import DiagnosticStartPointConfig from '../components/DiagnosticStartPointConfig';
-import VisualizationConfig from '../components/VisualizationConfig';
-import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame } from '../contexts/GameContext';
 import { useToast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import DiagnosticStartPointConfig from '../components/DiagnosticStartPointConfig';
+import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
+import HVCheckConfig from '../components/HVCheckConfig';
+import ModuleCard from '../components/ModuleCard';
+import VisualizationConfig from '../components/VisualizationConfig';
 
 const Customize = () => {
-  const [selectedModules, setSelectedModules] = useState({
-    carAndReportBasicInfo: true,
-    compactOverview: true,
-    safetyValues: true,
-    batteryValues: true,
-    troubleCodes: true,
-    disclaimer: true
-  });
-
-  const [overviewLogic, setOverviewLogic] = useState('');
-  const [diagnosticStartPoint, setDiagnosticStartPoint] = useState('vci');
-  const [resultPresentation, setResultPresentation] = useState(['ui']);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [activeConfig, setActiveConfig] = useState(null);
+  const [diagnosticStartPoint, setDiagnosticStartPoint] = useState('vci');
+  const [protocolDesign, setProtocolDesign] = useState({
+    logo: null,
+    primaryColor: '#000000',
+    secondaryColor: '#ffffff',
+    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer']
+  });
+  const [resultPresentation, setResultPresentation] = useState(['ui']);
 
   const { incrementConfigSaves, configSaves } = useGame();
   const { toast } = useToast();
 
   const handleSave = () => {
     console.log('Saved configuration:', { 
-      selectedModules, 
-      overviewLogic, 
       diagnosticStartPoint, 
+      protocolDesign,
       resultPresentation 
     });
     incrementConfigSaves();
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
 
     toast({
       title: "Configuration Saved!",
@@ -68,34 +55,49 @@ const Customize = () => {
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented' },
   ];
 
-  const renderModuleCard = (module) => (
-    <Card key={module.id} className="mb-6">
-      <CardHeader>
-        <CardTitle>{module.title}</CardTitle>
-        <CardDescription>{module.description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">
-          {module.id === 'manipulationModule' && "Detect and report unauthorized changes to vehicle systems."}
-          {module.id === 'crashModule' && "Analyze crash data for improved safety and incident reconstruction."}
-          {module.id === 'guidedHVDisconnectModule' && "Provide step-by-step guidance for safely disconnecting HV systems."}
-        </p>
-        <Button>Purchase Module</Button>
-      </CardContent>
-    </Card>
-  );
+  const renderConfigContent = () => {
+    switch (activeConfig) {
+      case 'startPoint':
+        return <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />;
+      case 'protocolDesign':
+        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} />;
+      case 'hvModule':
+        return <HVCheckConfig design={protocolDesign} />;
+      case 'manipulationModule':
+        return <ModuleCard 
+          title="Manipulation Module"
+          problem="Unauthorized changes to vehicle systems can compromise safety and performance."
+          solution="Our Manipulation Detection Module uses advanced algorithms to identify and report any unauthorized modifications, ensuring the integrity of your vehicle's systems."
+        />;
+      case 'crashModule':
+        return <ModuleCard 
+          title="Crash Module"
+          problem="Traditional crash analysis methods often lack real-time data and comprehensive insights."
+          solution="Our Crash Module provides instant, detailed crash data analysis, improving safety assessments and facilitating quicker, more informed responses to incidents."
+        />;
+      case 'guidedHVDisconnectModule':
+        return <ModuleCard 
+          title="Guided HV Disconnect Module"
+          problem="Disconnecting high-voltage systems can be complex and dangerous without proper guidance."
+          solution="Our step-by-step HV Disconnect Guide ensures safe and efficient disconnection procedures, minimizing risks and streamlining maintenance processes."
+        />;
+      case 'visualization':
+        return <VisualizationConfig presentation={resultPresentation} setPresentation={setResultPresentation} />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       <h1 className="text-3xl font-bold">Customize Diagnostics</h1>
       
       {activeConfig ? (
-        <Button onClick={() => setActiveConfig(null)} variant="outline">Back to Overview</Button>
+        <>
+          <Button onClick={() => setActiveConfig(null)} variant="outline">Back to Overview</Button>
+          {renderConfigContent()}
+          <Button onClick={handleSave} className="w-full">Save Configuration</Button>
+        </>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {configOptions.map((option) => (
@@ -108,107 +110,7 @@ const Customize = () => {
           ))}
         </div>
       )}
-      
-      {activeConfig === 'startPoint' && (
-        <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />
-      )}
-      
-      {activeConfig === 'protocolDesign' && (
-        <div className="flex space-x-4">
-          <div className="w-1/2">
-            <ProtocolDesignConfig selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
-          </div>
-          <div className="w-1/2">
-            <PDFPreview selectedModules={selectedModules} />
-          </div>
-        </div>
-      )}
-      
-      {activeConfig === 'hvModule' && (
-        <div className="flex space-x-4">
-          <div className="w-1/2">
-            <Tabs defaultValue="modules" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="modules">Modules</TabsTrigger>
-                <TabsTrigger value="values">Values</TabsTrigger>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-              </TabsList>
-              <TabsContent value="modules">
-                <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
-                {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
-              </TabsContent>
-              <TabsContent value="values">
-                {selectedModules.safetyValues && (
-                  <ValueSectionDropdown 
-                    title="Safety Values" 
-                    defaultValues={[
-                      'Insulation resistance',
-                      'HV interlock',
-                      'Isolation monitoring',
-                      'Potential equalization',
-                      'HV system status'
-                    ]}
-                  />
-                )}
-                {selectedModules.batteryValues && (
-                  <ValueSectionDropdown 
-                    title="Battery Values" 
-                    defaultValues={[
-                      'State of Charge (SoC)',
-                      'State of Health (SoH)',
-                      'Cell voltages',
-                      'Temperature distribution',
-                      'Capacity',
-                      'Internal resistance'
-                    ]}
-                  />
-                )}
-                {selectedModules.troubleCodes && (
-                  <ValueSectionDropdown 
-                    title="Trouble Codes" 
-                    defaultValues={[
-                      'Active DTCs',
-                      'Pending DTCs',
-                      'Permanent DTCs',
-                      'DTC description',
-                      'Freeze frame data'
-                    ]}
-                  />
-                )}
-              </TabsContent>
-              <TabsContent value="overview">
-                <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
-              </TabsContent>
-            </Tabs>
-          </div>
-          <div className="w-1/2">
-            <PDFPreview selectedModules={selectedModules} />
-          </div>
-        </div>
-      )}
-      
-      {activeConfig === 'manipulationModule' && renderModuleCard(configOptions.find(o => o.id === 'manipulationModule'))}
-      
-      {activeConfig === 'crashModule' && renderModuleCard(configOptions.find(o => o.id === 'crashModule'))}
-      
-      {activeConfig === 'guidedHVDisconnectModule' && renderModuleCard(configOptions.find(o => o.id === 'guidedHVDisconnectModule'))}
-      
-      {activeConfig === 'visualization' && (
-        <VisualizationConfig 
-          presentation={resultPresentation} 
-          setPresentation={setResultPresentation} 
-        />
-      )}
-      
-      {activeConfig && (
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button onClick={handleSave} className="w-full">Save Configuration</Button>
-        </motion.div>
-      )}
-    </motion.div>
+    </div>
   );
 };
 
