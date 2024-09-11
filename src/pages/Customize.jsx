@@ -7,11 +7,9 @@ import CarReportInfoConfig from '../components/CarReportInfoConfig';
 import PDFPreview from '../components/PDFPreview';
 import ModuleSelection from '../components/ModuleSelection';
 import OverviewLogicConfig from '../components/OverviewLogicConfig';
-import HVCheckProtocolConfig from '../components/HVCheckProtocolConfig';
-import ResultPresentationConfig from '../components/ResultPresentationConfig';
-import ConfettiAnimation from '../components/ConfettiAnimation';
-import ManipulationReportConfig from '../components/ManipulationReportConfig';
+import DiagnosticStartPointConfig from '../components/DiagnosticStartPointConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
+import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import { useGame } from '../contexts/GameContext';
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +25,7 @@ const Customize = () => {
   });
 
   const [overviewLogic, setOverviewLogic] = useState('');
-  const [hvCheckProtocol, setHVCheckProtocol] = useState('vci');
+  const [diagnosticStartPoint, setDiagnosticStartPoint] = useState('vci');
   const [resultPresentation, setResultPresentation] = useState(['ui']);
   const [showConfetti, setShowConfetti] = useState(false);
   const [activeConfig, setActiveConfig] = useState(null);
@@ -39,7 +37,7 @@ const Customize = () => {
     console.log('Saved configuration:', { 
       selectedModules, 
       overviewLogic, 
-      hvCheckProtocol, 
+      diagnosticStartPoint, 
       resultPresentation 
     });
     incrementConfigSaves();
@@ -61,10 +59,11 @@ const Customize = () => {
   };
 
   const configOptions = [
-    { id: 'protocol', title: 'HV-Check Protocol', description: 'Configure how the HV-Check is initiated' },
-    { id: 'report', title: 'HV-Check Report', description: 'Customize the contents of the HV-Check report' },
-    { id: 'manipulation', title: 'Manipulation Report', description: 'Set up manipulation detection settings' },
-    { id: 'visualization', title: 'Visualization', description: 'Choose how results are presented' },
+    { id: 'startPoint', title: 'Diagnostic Start Point', description: 'Configure how the diagnostic session is initiated' },
+    { id: 'protocolDesign', title: 'Protocol Design', description: 'Customize the style, logo, and module order of your protocol' },
+    { id: 'hvModule', title: 'HV-Check Module', description: 'Configure the HV-Check information module' },
+    { id: 'manipulationModule', title: 'Manipulation Module', description: 'Set up manipulation detection module' },
+    { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented' },
   ];
 
   return (
@@ -74,7 +73,7 @@ const Customize = () => {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <h1 className="text-3xl font-bold">Customize HV-Check</h1>
+      <h1 className="text-3xl font-bold">Customize Diagnostics</h1>
       
       {activeConfig ? (
         <Button onClick={() => setActiveConfig(null)} variant="outline">Back to Overview</Button>
@@ -91,11 +90,15 @@ const Customize = () => {
         </div>
       )}
       
-      {activeConfig === 'protocol' && (
-        <HVCheckProtocolConfig protocol={hvCheckProtocol} setProtocol={setHVCheckProtocol} />
+      {activeConfig === 'startPoint' && (
+        <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />
       )}
       
-      {activeConfig === 'report' && (
+      {activeConfig === 'protocolDesign' && (
+        <ProtocolDesignConfig selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+      )}
+      
+      {activeConfig === 'hvModule' && (
         <Tabs defaultValue="modules" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="modules">Modules</TabsTrigger>
@@ -154,8 +157,17 @@ const Customize = () => {
         </Tabs>
       )}
       
-      {activeConfig === 'manipulation' && (
-        <ManipulationReportConfig />
+      {activeConfig === 'manipulationModule' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Manipulation Module Configuration</CardTitle>
+            <CardDescription>Configure settings for manipulation detection</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Manipulation detection helps identify unauthorized changes to the vehicle's systems.</p>
+            {/* Add more configuration options for the Manipulation Module here */}
+          </CardContent>
+        </Card>
       )}
       
       {activeConfig === 'visualization' && (
@@ -173,8 +185,6 @@ const Customize = () => {
           <Button onClick={handleSave} className="w-full">Save Configuration</Button>
         </motion.div>
       )}
-      
-      {showConfetti && <ConfettiAnimation />}
     </motion.div>
   );
 };
