@@ -59,12 +59,31 @@ const Customize = () => {
   };
 
   const configOptions = [
-    { id: 'startPoint', title: 'Diagnostic Start Point', description: 'Configure how the diagnostic session is initiated' },
+    { id: 'startPoint', title: 'Diagnostic Starting Point', description: 'Configure how the diagnostic session is initiated' },
     { id: 'protocolDesign', title: 'Protocol Design', description: 'Customize the style, logo, and module order of your protocol' },
     { id: 'hvModule', title: 'HV-Check Module', description: 'Configure the HV-Check information module' },
     { id: 'manipulationModule', title: 'Manipulation Module', description: 'Set up manipulation detection module' },
+    { id: 'crashModule', title: 'Crash Module', description: 'Configure crash detection and analysis' },
+    { id: 'guidedHVDisconnectModule', title: 'Guided HV Disconnect Module', description: 'Step-by-step HV system disconnection guide' },
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented' },
   ];
+
+  const renderModuleCard = (module) => (
+    <Card key={module.id} className="mb-6">
+      <CardHeader>
+        <CardTitle>{module.title}</CardTitle>
+        <CardDescription>{module.description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="mb-4">
+          {module.id === 'manipulationModule' && "Detect and report unauthorized changes to vehicle systems."}
+          {module.id === 'crashModule' && "Analyze crash data for improved safety and incident reconstruction."}
+          {module.id === 'guidedHVDisconnectModule' && "Provide step-by-step guidance for safely disconnecting HV systems."}
+        </p>
+        <Button>Purchase Module</Button>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <motion.div 
@@ -95,80 +114,84 @@ const Customize = () => {
       )}
       
       {activeConfig === 'protocolDesign' && (
-        <ProtocolDesignConfig selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <ProtocolDesignConfig selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+          </div>
+          <div className="w-1/2">
+            <PDFPreview selectedModules={selectedModules} />
+          </div>
+        </div>
       )}
       
       {activeConfig === 'hvModule' && (
-        <Tabs defaultValue="modules" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="modules">Modules</TabsTrigger>
-            <TabsTrigger value="values">Values</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-          </TabsList>
-          <TabsContent value="modules">
-            <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
-            {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
-            {selectedModules.compactOverview && (
-              <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
-            )}
-          </TabsContent>
-          <TabsContent value="values">
-            {selectedModules.safetyValues && (
-              <ValueSectionDropdown 
-                title="Safety Values" 
-                defaultValues={[
-                  'Insulation resistance',
-                  'HV interlock',
-                  'Isolation monitoring',
-                  'Potential equalization',
-                  'HV system status'
-                ]}
-              />
-            )}
-            {selectedModules.batteryValues && (
-              <ValueSectionDropdown 
-                title="Battery Values" 
-                defaultValues={[
-                  'State of Charge (SoC)',
-                  'State of Health (SoH)',
-                  'Cell voltages',
-                  'Temperature distribution',
-                  'Capacity',
-                  'Internal resistance'
-                ]}
-              />
-            )}
-            {selectedModules.troubleCodes && (
-              <ValueSectionDropdown 
-                title="Trouble Codes" 
-                defaultValues={[
-                  'Active DTCs',
-                  'Pending DTCs',
-                  'Permanent DTCs',
-                  'DTC description',
-                  'Freeze frame data'
-                ]}
-              />
-            )}
-          </TabsContent>
-          <TabsContent value="preview">
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <Tabs defaultValue="modules" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="modules">Modules</TabsTrigger>
+                <TabsTrigger value="values">Values</TabsTrigger>
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+              </TabsList>
+              <TabsContent value="modules">
+                <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+                {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
+              </TabsContent>
+              <TabsContent value="values">
+                {selectedModules.safetyValues && (
+                  <ValueSectionDropdown 
+                    title="Safety Values" 
+                    defaultValues={[
+                      'Insulation resistance',
+                      'HV interlock',
+                      'Isolation monitoring',
+                      'Potential equalization',
+                      'HV system status'
+                    ]}
+                  />
+                )}
+                {selectedModules.batteryValues && (
+                  <ValueSectionDropdown 
+                    title="Battery Values" 
+                    defaultValues={[
+                      'State of Charge (SoC)',
+                      'State of Health (SoH)',
+                      'Cell voltages',
+                      'Temperature distribution',
+                      'Capacity',
+                      'Internal resistance'
+                    ]}
+                  />
+                )}
+                {selectedModules.troubleCodes && (
+                  <ValueSectionDropdown 
+                    title="Trouble Codes" 
+                    defaultValues={[
+                      'Active DTCs',
+                      'Pending DTCs',
+                      'Permanent DTCs',
+                      'DTC description',
+                      'Freeze frame data'
+                    ]}
+                  />
+                )}
+              </TabsContent>
+              <TabsContent value="overview">
+                <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
+              </TabsContent>
+            </Tabs>
+          </div>
+          <div className="w-1/2">
             <PDFPreview selectedModules={selectedModules} />
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       )}
       
-      {activeConfig === 'manipulationModule' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Manipulation Module Configuration</CardTitle>
-            <CardDescription>Configure settings for manipulation detection</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Manipulation detection helps identify unauthorized changes to the vehicle's systems.</p>
-            {/* Add more configuration options for the Manipulation Module here */}
-          </CardContent>
-        </Card>
-      )}
+      {activeConfig === 'manipulationModule' && renderModuleCard(configOptions.find(o => o.id === 'manipulationModule'))}
+      
+      {activeConfig === 'crashModule' && renderModuleCard(configOptions.find(o => o.id === 'crashModule'))}
+      
+      {activeConfig === 'guidedHVDisconnectModule' && renderModuleCard(configOptions.find(o => o.id === 'guidedHVDisconnectModule'))}
       
       {activeConfig === 'visualization' && (
         <VisualizationConfig 
