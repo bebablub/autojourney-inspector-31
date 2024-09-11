@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PDFPreview = ({ design, selectedModules }) => {
+const PDFPreview = ({ design }) => {
   const { logo, primaryColor, secondaryColor, moduleOrder } = design;
 
   const renderModule = (moduleName) => {
@@ -56,9 +56,7 @@ const PDFPreview = ({ design, selectedModules }) => {
     <div className="border-2 border-gray-300 p-4 rounded-lg" style={{ backgroundColor: secondaryColor, color: primaryColor }}>
       {logo && <img src={logo} alt="Company Logo" className="mb-4 max-w-full h-auto" />}
       <h2 className="text-2xl font-bold mb-4">HV-CHECK Diagnostic Report</h2>
-      {moduleOrder.map((moduleName) => (
-        selectedModules && selectedModules[moduleName] && renderModule(moduleName)
-      ))}
+      {moduleOrder.map((moduleName) => renderModule(moduleName))}
     </div>
   );
 };

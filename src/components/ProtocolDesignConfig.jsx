@@ -58,14 +58,24 @@ const ProtocolDesignConfig = ({ design, setDesign }) => {
         </div>
         <div>
           <Label htmlFor="primaryColor">Primary Color</Label>
-          <Input id="primaryColor" type="color" value={design.primaryColor} onChange={(e) => setDesign({ ...design, primaryColor: e.target.value })} />
+          <Input 
+            id="primaryColor" 
+            type="color" 
+            value={design.primaryColor} 
+            onChange={(e) => setDesign({ ...design, primaryColor: e.target.value })} 
+          />
         </div>
         <div>
           <Label htmlFor="secondaryColor">Secondary Color</Label>
-          <Input id="secondaryColor" type="color" value={design.secondaryColor} onChange={(e) => setDesign({ ...design, secondaryColor: e.target.value })} />
+          <Input 
+            id="secondaryColor" 
+            type="color" 
+            value={design.secondaryColor} 
+            onChange={(e) => setDesign({ ...design, secondaryColor: e.target.value })} 
+          />
         </div>
         <div>
-          <Label>Module Order</Label>
+          <Label>Module Order (Drag to reorder)</Label>
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={design.moduleOrder} strategy={verticalListSortingStrategy}>
               <ul className="space-y-2">
