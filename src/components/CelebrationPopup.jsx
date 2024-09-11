@@ -2,8 +2,19 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import confetti from 'canvas-confetti';
 
 const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
+  React.useEffect(() => {
+    if (isOpen) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -11,9 +22,9 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed inset-0 flex items-center justify-center z-50"
+          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
         >
-          <div className="bg-white rounded-lg p-8 shadow-xl relative">
+          <div className="bg-white rounded-lg p-8 shadow-xl relative max-w-md w-full">
             <Button
               variant="ghost"
               size="icon"
@@ -25,34 +36,33 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
             <motion.h2
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-2xl font-bold mb-4 text-center"
+              className="text-3xl font-bold mb-4 text-center text-blue-600"
             >
-              HV-Check Ready!
+              HV-Check Complete! 🎉
             </motion.h2>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className="flex justify-center space-x-4 mb-4"
+              className="flex justify-center space-x-4 mb-6"
             >
-              <span className="text-4xl">🎉</span>
-              <span className="text-4xl">🎊</span>
-              <span className="text-4xl">🥳</span>
+              <span className="text-6xl">🚗</span>
+              <span className="text-6xl">✅</span>
             </motion.div>
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-center text-gray-600 mb-4"
+              className="text-center text-gray-600 mb-6"
             >
-              Congratulations! Your HV-Check is complete and ready for review.
+              Great job! Your HV-Check is complete and the report is ready for review. You're taking important steps to ensure the safety and performance of your vehicle.
             </motion.p>
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               className="flex justify-center space-x-4"
             >
-              <Button onClick={onClose}>Close</Button>
-              <Button onClick={onShowMe} variant="outline">Show Me</Button>
+              <Button onClick={onClose} variant="outline">Close</Button>
+              <Button onClick={onShowMe} variant="default">View Report</Button>
             </motion.div>
           </div>
         </motion.div>
