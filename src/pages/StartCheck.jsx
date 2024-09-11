@@ -19,7 +19,7 @@ const StartCheck = () => {
     { progress: 60, status: 'Scanning control units' },
     { progress: 80, status: '40 control units scanned' },
     { progress: 95, status: 'Preparing protocol' },
-    { progress: 100, status: 'HV-Check complete!' },
+    { progress: 100, status: 'Report complete!' },
   ];
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const StartCheck = () => {
   const startHVCheck = () => {
     setIsChecking(true);
     setProgress(0);
-    setStatus('Initializing HV-Check...');
+    setStatus('Initializing Report...');
   };
 
   const handleCloseCelebration = () => {
@@ -69,15 +69,15 @@ const StartCheck = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8 text-center">Start HV-Check</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">Start Report</h1>
       
       {!isChecking && progress === 0 ? (
         <div className="text-center">
           <p className="text-xl text-gray-600 mb-8">
-            Ready to ensure your vehicle's high-voltage system is in top shape? Click the button below to start the HV-Check process.
+            Ready to ensure your vehicle's high-voltage system is in top shape? Click the button below to start the Report process.
           </p>
           <Button onClick={startHVCheck} size="lg" className="text-2xl px-12 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-            Start HV-Check
+            Start Report
           </Button>
         </div>
       ) : (

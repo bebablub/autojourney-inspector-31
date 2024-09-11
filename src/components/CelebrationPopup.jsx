@@ -38,7 +38,7 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
               animate={{ y: 0, opacity: 1 }}
               className="text-3xl font-bold mb-4 text-center text-blue-600"
             >
-              HV-Check Complete! 🎉
+              Report Complete! 🎉
             </motion.h2>
             <motion.div
               initial={{ scale: 0 }}
@@ -54,7 +54,7 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
               animate={{ y: 0, opacity: 1 }}
               className="text-center text-gray-600 mb-6"
             >
-              Great job! Your HV-Check is complete and the report is ready for review. You're taking important steps to ensure the safety and performance of your vehicle.
+              Great job! Your Report is complete and ready for review. You're taking important steps to ensure the safety and performance of your vehicle.
             </motion.p>
             <motion.div
               initial={{ y: 20, opacity: 0 }}
