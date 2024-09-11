@@ -3,29 +3,48 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import PDFPreview from './PDFPreview';
+
+const SortableItem = ({ id, children }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  
+  return (
+    <li ref={setNodeRef} style={style} {...attributes} {...listeners} className="bg-gray-100 p-2 rounded mb-2 cursor-move">
+      {children}
+    </li>
+  );
+};
 
 const ProtocolDesignConfig = ({ selectedModules, setSelectedModules }) => {
   const [logo, setLogo] = useState(null);
   const [primaryColor, setPrimaryColor] = useState('#000000');
   const [secondaryColor, setSecondaryColor] = useState('#ffffff');
 
-  const onDragEnd = (result) => {
-    if (!result.destination) {
-      return;
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setSelectedModules((items) => {
+        const oldIndex = Object.keys(items).indexOf(active.id);
+        const newIndex = Object.keys(items).indexOf(over.id);
+        
+        const newOrder = arrayMove(Object.keys(items), oldIndex, newIndex);
+        const newItems = {};
+        newOrder.forEach(key => {
+          newItems[key] = items[key];
+        });
+        
+        return newItems;
+      });
     }
-
-    const items = Array.from(Object.keys(selectedModules));
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const newSelectedModules = {};
-    items.forEach(item => {
-      newSelectedModules[item] = selectedModules[item];
-    });
-
-    setSelectedModules(newSelectedModules);
   };
 
   return (
@@ -59,29 +78,17 @@ const ProtocolDesignConfig = ({ selectedModules, setSelectedModules }) => {
           <CardDescription>Drag and drop to reorder modules</CardDescription>
         </CardHeader>
         <CardContent>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="modules">
-              {(provided) => (
-                <ul {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
-                  {Object.keys(selectedModules).map((key, index) => (
-                    <Draggable key={key} draggableId={key} index={index}>
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="bg-gray-100 p-2 rounded"
-                        >
-                          {key.split(/(?=[A-Z])/).join(" ")}
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={Object.keys(selectedModules)} strategy={verticalListSortingStrategy}>
+              <ul className="space-y-2">
+                {Object.keys(selectedModules).map((key) => (
+                  <SortableItem key={key} id={key}>
+                    {key.split(/(?=[A-Z])/).join(" ")}
+                  </SortableItem>
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
         </CardContent>
       </Card>
 
