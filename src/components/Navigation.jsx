@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,33 +14,40 @@ const Navigation = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-10">
+    <nav className="bg-background border-b border-border sticky top-0 z-10">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link to="/" className="text-xl font-bold text-gray-800">Diagnostics Tool</Link>
-          <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-            <Tooltip content="Profile">
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <UserIcon className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-            </Tooltip>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                <Link to="/customize">Customize</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                <Link to="/reports">Reports</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                <Link to="/account">Account</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                <Link to="/vci-management">VCI Management</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link to="/" className="text-xl font-bold text-foreground">Diagnostics Tool</Link>
+          <TooltipProvider>
+            <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <UserIcon className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Profile</p>
+                </TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
+                  <Link to="/customize">Customize</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
+                  <Link to="/reports">Reports</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
+                  <Link to="/account">Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
+                  <Link to="/vci-management">VCI Management</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TooltipProvider>
         </div>
       </div>
     </nav>
