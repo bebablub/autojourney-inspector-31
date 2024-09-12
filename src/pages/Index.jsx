@@ -7,7 +7,7 @@ import { ArrowRightIcon, SettingsIcon, PlayIcon, FileTextIcon } from 'lucide-rea
 const FeatureCard = ({ icon: Icon, title, description, linkTo }) => (
   <Card className="flex flex-col justify-between h-full transition-all duration-300 hover:shadow-lg">
     <CardHeader>
-      <Icon className="w-10 h-10 mb-2 text-blue-500" />
+      <Icon className="w-10 h-10 mb-2 text-primary" />
       <CardTitle>{title}</CardTitle>
       <CardDescription>{description}</CardDescription>
     </CardHeader>
@@ -27,7 +27,7 @@ const Index = () => {
     <div className="space-y-8">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">Welcome to HV-Check Diagnostic Tool</h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-muted-foreground mb-8">
           Empower your automotive diagnostics with our comprehensive tool for modern vehicles.
         </p>
       </div>
