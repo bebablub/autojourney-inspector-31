@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { UserIcon, HomeIcon, SettingsIcon, FileTextIcon, ToolIcon } from 'lucide-react';
+import { UserIcon, HomeIcon, SettingsIcon, FileTextIcon, WrenchIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -27,7 +27,7 @@ const Navigation = () => {
                 <TooltipTrigger asChild>
                   <Link to="/start-check">
                     <Button variant="outline">
-                      <ToolIcon className="mr-2 h-4 w-4" />
+                      <WrenchIcon className="mr-2 h-4 w-4" />
                       Start Check
                     </Button>
                   </Link>
@@ -72,7 +72,7 @@ const Navigation = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
                     <Link to="/vci-management" className="text-foreground flex items-center">
-                      <ToolIcon className="mr-2 h-4 w-4" />
+                      <WrenchIcon className="mr-2 h-4 w-4" />
                       VCI Management
                     </Link>
                   </DropdownMenuItem>
