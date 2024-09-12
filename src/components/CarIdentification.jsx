@@ -7,12 +7,24 @@ import { Loader2 } from 'lucide-react';
 const CarIdentification = () => {
   const [identifying, setIdentifying] = useState(true);
   const [carInfo, setCarInfo] = useState(null);
+  const [step, setStep] = useState(0);
   const navigate = useNavigate();
+
+  const steps = [
+    "Initializing AI-powered identification...",
+    "Analyzing vehicle characteristics...",
+    "Matching with database...",
+    "Verifying results...",
+    "Finalizing identification..."
+  ];
 
   useEffect(() => {
     const identifyCar = async () => {
-      // Simulating API call for car identification
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      for (let i = 0; i < steps.length; i++) {
+        setStep(i);
+        // Simulate API call for each step
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
       setCarInfo({
         make: 'Volkswagen',
         model: 'ID.4',
@@ -33,14 +45,17 @@ const CarIdentification = () => {
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Car Identification</CardTitle>
-          <CardDescription>We're identifying your vehicle...</CardDescription>
+          <CardTitle>AI Car Identification</CardTitle>
+          <CardDescription>We're using advanced AI to identify your vehicle</CardDescription>
         </CardHeader>
         <CardContent>
           {identifying ? (
             <div className="flex flex-col items-center">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <p className="mt-4">Please wait while we identify your vehicle...</p>
+              <Loader2 className="h-8 w-8 animate-spin mb-4" />
+              <p className="text-center mb-2">{steps[step]}</p>
+              <div className="w-full bg-secondary rounded-full h-2.5 dark:bg-secondary">
+                <div className="bg-primary h-2.5 rounded-full" style={{ width: `${(step + 1) / steps.length * 100}%` }}></div>
+              </div>
             </div>
           ) : (
             <div>
