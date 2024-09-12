@@ -89,7 +89,9 @@ const CarIdentification = () => {
           {stage !== 'complete' ? (
             <div className="flex flex-col items-center">
               <Loader2 className="h-8 w-8 animate-spin mb-4" />
-              <p className="text-center mb-2">{getCurrentStage().steps[Math.floor((progress / 100) * getCurrentStage().steps.length)]}</p>
+              <div className="h-16 flex items-center justify-center">
+                <p className="text-center mb-2">{getCurrentStage().steps[Math.floor((progress / 100) * getCurrentStage().steps.length)]}</p>
+              </div>
               <div className="w-full bg-secondary rounded-full h-2.5 dark:bg-secondary">
                 <div className="bg-primary h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
               </div>

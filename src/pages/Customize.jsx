@@ -8,6 +8,7 @@ import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import HVCheckConfig from '../components/HVCheckConfig';
 import ModuleCard from '../components/ModuleCard';
 import VisualizationConfig from '../components/VisualizationConfig';
+import { motion } from 'framer-motion';
 
 const Customize = () => {
   const [activeConfig, setActiveConfig] = useState(null);
@@ -101,12 +102,22 @@ const Customize = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {configOptions.map((option) => (
-            <Card key={option.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setActiveConfig(option.id)}>
-              <CardHeader>
-                <CardTitle>{option.title}</CardTitle>
-                <CardDescription>{option.description}</CardDescription>
-              </CardHeader>
-            </Card>
+            <motion.div
+              key={option.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Card 
+                className="cursor-pointer hover:shadow-lg transition-shadow" 
+                onClick={() => setActiveConfig(option.id)}
+              >
+                <CardHeader>
+                  <CardTitle>{option.title}</CardTitle>
+                  <CardDescription>{option.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
