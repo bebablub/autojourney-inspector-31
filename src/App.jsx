@@ -12,6 +12,7 @@ import Reports from "./pages/Reports";
 import Account from "./pages/Account";
 import VCIManagement from "./pages/VCIManagement";
 import StartCheck from "./pages/StartCheck";
+import CarIdentification from "./components/CarIdentification";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
                 <Route path="account" element={<Account />} />
                 <Route path="vci-management" element={<VCIManagement />} />
                 <Route path="start-check" element={<StartCheck />} />
+                <Route path="car-identification" element={<CarIdentification />} />
               </Route>
             </Routes>
           </BrowserRouter>

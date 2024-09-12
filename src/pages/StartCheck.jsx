@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CelebrationPopup from '../components/CelebrationPopup';
 import RotatingProgressBar from '../components/RotatingProgressBar';
 import ConfettiAnimation from '../components/ConfettiAnimation';
 import { motion } from 'framer-motion';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BatteryChargingIcon, InfoIcon, AlertTriangleIcon } from 'lucide-react';
 
 const checkSteps = [
   { progress: 20, status: 'Connecting to the car...' },
-  { progress: 40, status: 'Identifying car' },
-  { progress: 60, status: 'Scanning control units' },
-  { progress: 80, status: '40 control units scanned' },
-  { progress: 95, status: 'Preparing protocol' },
+  { progress: 40, status: 'Scanning control units' },
+  { progress: 60, status: 'Analyzing data' },
+  { progress: 80, status: 'Preparing report' },
   { progress: 100, status: 'Report complete!' },
 ];
 
@@ -23,12 +19,9 @@ const StartCheck = () => {
   const [status, setStatus] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const [dialogType, setDialogType] = useState('');
-  const [batterySize, setBatterySize] = useState('');
-  const [selectedCar, setSelectedCar] = useState('');
-  const [vciStatus, setVciStatus] = useState('connected');
   const navigate = useNavigate();
+  const location = useLocation();
+  const carInfo = location.state?.carInfo;
 
   useEffect(() => {
     if (isChecking) {
@@ -50,31 +43,9 @@ const StartCheck = () => {
   }, [isChecking]);
 
   const startReport = () => {
-    const scenarios = ['unsupported', 'selectBattery', 'autoIdentify'];
-    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    
-    switch (randomScenario) {
-      case 'unsupported':
-        setDialogType('unsupported');
-        setShowDialog(true);
-        break;
-      case 'selectBattery':
-        setDialogType('selectBattery');
-        setShowDialog(true);
-        break;
-      case 'autoIdentify':
-        setSelectedCar('ID.3');
-        setIsChecking(true);
-        setProgress(0);
-        setStatus('Initializing Report...');
-        break;
-    }
-  };
-
-  const handleDialogClose = () => {
-    setShowDialog(false);
-    if (dialogType === 'selectBattery' && batterySize) {
-      setSelectedCar('ID.4');
+    if (!carInfo) {
+      navigate('/car-identification');
+    } else {
       setIsChecking(true);
       setProgress(0);
       setStatus('Initializing Report...');
@@ -87,29 +58,14 @@ const StartCheck = () => {
     navigate('/reports');
   };
 
-  const CarAnimation = () => (
-    <motion.div
-      className="text-4xl"
-      initial={{ x: '0%' }}
-      animate={{ x: `${progress}%` }}
-      transition={{ duration: 0.5 }}
-    >
-      🚗
-    </motion.div>
-  );
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">
       <h1 className="text-4xl font-bold mb-8 text-center">Start Report</h1>
       
       {!isChecking && progress === 0 ? (
-        <StartButton startReport={startReport} vciStatus={vciStatus} />
+        <StartButton startReport={startReport} carInfo={carInfo} />
       ) : (
-        <ProgressDisplay 
-          progress={progress} 
-          status={status} 
-          selectedCar={selectedCar} 
-        />
+        <ProgressDisplay progress={progress} status={status} carInfo={carInfo} />
       )}
 
       {showCelebration && <ConfettiAnimation />}
@@ -118,32 +74,27 @@ const StartCheck = () => {
         onClose={handleCloseCelebration}
         onShowMe={handleShowMe}
       />
-
-      <DialogComponent 
-        showDialog={showDialog}
-        setShowDialog={setShowDialog}
-        dialogType={dialogType}
-        batterySize={batterySize}
-        setBatterySize={setBatterySize}
-        handleDialogClose={handleDialogClose}
-      />
     </div>
   );
 };
 
-const StartButton = ({ startReport, vciStatus }) => (
+const StartButton = ({ startReport, carInfo }) => (
   <div className="text-center">
     <p className="text-xl text-muted-foreground mb-8">
       Ready to ensure your vehicle's high-voltage system is in top shape? Click the button below to start the Report process.
     </p>
     <Button onClick={startReport} size="lg" className="text-2xl px-12 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-green-500 hover:bg-green-600">
-      Start Report
+      {carInfo ? 'Start Report' : 'Identify Car'}
     </Button>
-    <p className="mt-4 text-sm text-muted-foreground">VCI "DiagPro X1" {vciStatus}</p>
+    {carInfo && (
+      <p className="mt-4 text-sm text-muted-foreground">
+        {`${carInfo.make} ${carInfo.model} (${carInfo.year}) - ${carInfo.batteryCapacity}`}
+      </p>
+    )}
   </div>
 );
 
-const ProgressDisplay = ({ progress, status, selectedCar }) => (
+const ProgressDisplay = ({ progress, status, carInfo }) => (
   <div className="text-center w-full max-w-2xl">
     <div className="relative mb-8">
       <RotatingProgressBar progress={progress} status={status} />
@@ -157,64 +108,23 @@ const ProgressDisplay = ({ progress, status, selectedCar }) => (
         </div>
       ))}
     </div>
-    {selectedCar && (
+    {carInfo && (
       <div className="mt-8">
-        <p className="text-xl font-semibold">Selected Car: {selectedCar}</p>
+        <p className="text-xl font-semibold">{`${carInfo.make} ${carInfo.model} (${carInfo.year})`}</p>
+        <p className="text-muted-foreground">{`Battery Capacity: ${carInfo.batteryCapacity}`}</p>
         <div className="mt-4 relative w-full h-8 bg-muted rounded-full overflow-hidden">
-          <CarAnimation />
+          <motion.div
+            className="text-4xl"
+            initial={{ x: '0%' }}
+            animate={{ x: `${progress}%` }}
+            transition={{ duration: 0.5 }}
+          >
+            🚗
+          </motion.div>
         </div>
       </div>
     )}
   </div>
-);
-
-const DialogComponent = ({ showDialog, setShowDialog, dialogType, batterySize, setBatterySize, handleDialogClose }) => (
-  <Dialog open={showDialog} onOpenChange={setShowDialog}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>
-          {dialogType === 'unsupported' ? 'Unsupported Car' : 'Select Battery Size'}
-        </DialogTitle>
-        <DialogDescription>
-          {dialogType === 'unsupported' 
-            ? "We're sorry, but this car model is not supported by our diagnostic tool."
-            : "We couldn't automatically detect your battery size. Please select it manually."}
-        </DialogDescription>
-      </DialogHeader>
-      {dialogType === 'selectBattery' && (
-        <>
-          <div className="flex items-center space-x-2 mb-4">
-            <BatteryChargingIcon className="w-6 h-6 text-primary" />
-            <Select value={batterySize} onValueChange={setBatterySize}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select battery size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="45">45 kWh</SelectItem>
-                <SelectItem value="58">58 kWh</SelectItem>
-                <SelectItem value="77">77 kWh</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-start space-x-2 text-sm text-muted-foreground">
-            <InfoIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-            <p>You can find the battery size information in your vehicle's manual or on the manufacturer's website.</p>
-          </div>
-        </>
-      )}
-      {dialogType === 'unsupported' && (
-        <div className="flex items-start space-x-2 text-sm text-muted-foreground">
-          <AlertTriangleIcon className="w-4 h-4 mt-0.5 flex-shrink-0 text-warning" />
-          <p>Please check our list of supported vehicles or contact customer support for assistance.</p>
-        </div>
-      )}
-      <DialogFooter>
-        <Button onClick={handleDialogClose}>
-          {dialogType === 'unsupported' ? 'Close' : 'Continue'}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
 );
 
 export default StartCheck;
