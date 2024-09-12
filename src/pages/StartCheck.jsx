@@ -7,20 +7,23 @@ import ConfettiAnimation from '../components/ConfettiAnimation';
 import { motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BatteryChargingIcon, InfoIcon } from 'lucide-react';
+import { BatteryChargingIcon, InfoIcon, AlertTriangleIcon } from 'lucide-react';
 
 const StartCheck = () => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [showBatteryDialog, setShowBatteryDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogType, setDialogType] = useState('');
   const [batterySize, setBatterySize] = useState('');
+  const [selectedCar, setSelectedCar] = useState('');
+  const [vciStatus, setVciStatus] = useState('connected');
   const navigate = useNavigate();
 
   const checkSteps = [
     { progress: 20, status: 'Connecting to the car...' },
-    { progress: 40, status: 'Identifying car: ID.3' },
+    { progress: 40, status: 'Identifying car' },
     { progress: 60, status: 'Scanning control units' },
     { progress: 80, status: '40 control units scanned' },
     { progress: 95, status: 'Preparing protocol' },
@@ -47,14 +50,35 @@ const StartCheck = () => {
   }, [isChecking]);
 
   const startReport = () => {
-    setShowBatteryDialog(true);
+    const scenarios = ['unsupported', 'selectBattery', 'autoIdentify'];
+    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    
+    switch (randomScenario) {
+      case 'unsupported':
+        setDialogType('unsupported');
+        setShowDialog(true);
+        break;
+      case 'selectBattery':
+        setDialogType('selectBattery');
+        setShowDialog(true);
+        break;
+      case 'autoIdentify':
+        setSelectedCar('ID.3');
+        setIsChecking(true);
+        setProgress(0);
+        setStatus('Initializing Report...');
+        break;
+    }
   };
 
-  const handleBatterySizeSelected = () => {
-    setShowBatteryDialog(false);
-    setIsChecking(true);
-    setProgress(0);
-    setStatus('Initializing Report...');
+  const handleDialogClose = () => {
+    setShowDialog(false);
+    if (dialogType === 'selectBattery' && batterySize) {
+      setSelectedCar('ID.4');
+      setIsChecking(true);
+      setProgress(0);
+      setStatus('Initializing Report...');
+    }
   };
 
   const handleCloseCelebration = () => {
@@ -68,7 +92,7 @@ const StartCheck = () => {
 
   const CarAnimation = () => (
     <motion.div
-      className="absolute bottom-0 left-0"
+      className="text-4xl"
       initial={{ x: '0%' }}
       animate={{ x: `${progress}%` }}
       transition={{ duration: 0.5 }}
@@ -78,7 +102,7 @@ const StartCheck = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-4xl font-bold mb-8 text-center">Start Report</h1>
       
       {!isChecking && progress === 0 ? (
@@ -89,13 +113,12 @@ const StartCheck = () => {
           <Button onClick={startReport} size="lg" className="text-2xl px-12 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-green-500 hover:bg-green-600">
             Start Report
           </Button>
-          <p className="mt-4 text-sm text-gray-500">VCI "DiagPro X1" connected</p>
+          <p className="mt-4 text-sm text-gray-500">VCI "DiagPro X1" {vciStatus}</p>
         </div>
       ) : (
         <div className="text-center w-full max-w-2xl">
           <div className="relative mb-8">
             <RotatingProgressBar progress={progress} status={status} />
-            <CarAnimation />
           </div>
           <p className="mt-4 text-lg text-gray-600">
             {status}
@@ -108,6 +131,14 @@ const StartCheck = () => {
               </div>
             ))}
           </div>
+          {selectedCar && (
+            <div className="mt-8">
+              <p className="text-xl font-semibold">Selected Car: {selectedCar}</p>
+              <div className="mt-4 relative w-full h-8 bg-gray-200 rounded-full overflow-hidden">
+                <CarAnimation />
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -118,33 +149,49 @@ const StartCheck = () => {
         onShowMe={handleShowMe}
       />
 
-      <Dialog open={showBatteryDialog} onOpenChange={setShowBatteryDialog}>
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Select Battery Size</DialogTitle>
+            <DialogTitle>
+              {dialogType === 'unsupported' ? 'Unsupported Car' : 'Select Battery Size'}
+            </DialogTitle>
             <DialogDescription>
-              We couldn't automatically detect your battery size. Please select it manually.
+              {dialogType === 'unsupported' 
+                ? "We're sorry, but this car model is not supported by our diagnostic tool."
+                : "We couldn't automatically detect your battery size. Please select it manually."}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center space-x-2 mb-4">
-            <BatteryChargingIcon className="w-6 h-6 text-blue-500" />
-            <Select value={batterySize} onValueChange={setBatterySize}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select battery size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="45">45 kWh</SelectItem>
-                <SelectItem value="58">58 kWh</SelectItem>
-                <SelectItem value="77">77 kWh</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-start space-x-2 text-sm text-gray-500">
-            <InfoIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-            <p>You can find the battery size information in your vehicle's manual or on the manufacturer's website.</p>
-          </div>
+          {dialogType === 'selectBattery' && (
+            <>
+              <div className="flex items-center space-x-2 mb-4">
+                <BatteryChargingIcon className="w-6 h-6 text-blue-500" />
+                <Select value={batterySize} onValueChange={setBatterySize}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select battery size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="45">45 kWh</SelectItem>
+                    <SelectItem value="58">58 kWh</SelectItem>
+                    <SelectItem value="77">77 kWh</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-start space-x-2 text-sm text-gray-500">
+                <InfoIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <p>You can find the battery size information in your vehicle's manual or on the manufacturer's website.</p>
+              </div>
+            </>
+          )}
+          {dialogType === 'unsupported' && (
+            <div className="flex items-start space-x-2 text-sm text-gray-500">
+              <AlertTriangleIcon className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-500" />
+              <p>Please check our list of supported vehicles or contact customer support for assistance.</p>
+            </div>
+          )}
           <DialogFooter>
-            <Button onClick={handleBatterySizeSelected} disabled={!batterySize}>Continue</Button>
+            <Button onClick={handleDialogClose}>
+              {dialogType === 'unsupported' ? 'Close' : 'Continue'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
