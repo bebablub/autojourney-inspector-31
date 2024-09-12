@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from 'lucide-react';
+import CelebrationPopup from './CelebrationPopup';
+import { useVehicle } from '../contexts/VehicleContext';
 
 const CarIdentification = () => {
   const [stage, setStage] = useState('identifying');
   const [progress, setProgress] = useState(0);
-  const [carInfo, setCarInfo] = useState(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   const navigate = useNavigate();
+  const { setVehicleInfo } = useVehicle();
 
   const stages = [
     { id: 'identifying', steps: [
@@ -46,17 +49,19 @@ const CarIdentification = () => {
       }
 
       if (stageId === 'identifying') {
-        setCarInfo({
+        const vehicleInfo = {
           make: 'Volkswagen',
           model: 'ID.4',
           year: 2023,
           batteryCapacity: '77 kWh'
-        });
+        };
+        setVehicleInfo(vehicleInfo);
         runStage('reading');
       } else if (stageId === 'reading') {
         runStage('beautifying');
       } else {
         setStage('complete');
+        setShowCelebration(true);
       }
     };
 
@@ -64,7 +69,11 @@ const CarIdentification = () => {
   }, []);
 
   const handleContinue = () => {
-    navigate('/report', { state: { carInfo } });
+    navigate('/report');
+  };
+
+  const handleCloseCelebration = () => {
+    setShowCelebration(false);
   };
 
   const getCurrentStage = () => stages.find(s => s.id === stage);
@@ -93,6 +102,12 @@ const CarIdentification = () => {
           )}
         </CardContent>
       </Card>
+      <CelebrationPopup 
+        isOpen={showCelebration}
+        onClose={handleCloseCelebration}
+        onShowMe={handleContinue}
+        message="Your vehicle report is ready!"
+      />
     </div>
   );
 };

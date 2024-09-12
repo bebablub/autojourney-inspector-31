@@ -1,11 +1,16 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
+import VehicleInfo from './VehicleInfo';
+import { useVehicle } from '../contexts/VehicleContext';
 
 const Layout = () => {
+  const { vehicleInfo } = useVehicle();
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navigation />
+      {vehicleInfo && <VehicleInfo />}
       <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <Outlet />
       </main>
