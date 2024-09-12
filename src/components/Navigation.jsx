@@ -32,18 +32,18 @@ const Navigation = () => {
                   <p>Profile</p>
                 </TooltipContent>
               </Tooltip>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-background border-border">
                 <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                  <Link to="/customize">Customize</Link>
+                  <Link to="/customize" className="text-foreground">Customize</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                  <Link to="/reports">Reports</Link>
+                  <Link to="/reports" className="text-foreground">Reports</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                  <Link to="/account">Account</Link>
+                  <Link to="/account" className="text-foreground">Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setIsProfileOpen(false)}>
-                  <Link to="/vci-management">VCI Management</Link>
+                  <Link to="/vci-management" className="text-foreground">VCI Management</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
