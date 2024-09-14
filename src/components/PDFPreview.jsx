@@ -1,55 +1,63 @@
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const PDFPreview = ({ design }) => {
+const PDFPreview = ({ design, activatedModules }) => {
   const { logo, primaryColor, secondaryColor, moduleOrder } = design;
 
   const renderModule = (moduleName) => {
-    switch (moduleName) {
-      case 'carAndReportBasicInfo':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Car and Report Info</h4>
-            <p className="text-sm">VIN, Make, Model, Year, etc.</p>
-          </div>
-        );
-      case 'compactOverview':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Compact Overview</h4>
-            <p className="text-sm">Key diagnostic results</p>
-          </div>
-        );
-      case 'safetyValues':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Safety Values</h4>
-            <p className="text-sm">Insulation resistance, HV interlock, etc.</p>
-          </div>
-        );
-      case 'batteryValues':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Battery Values</h4>
-            <p className="text-sm">SoC, SoH, Cell voltages, etc.</p>
-          </div>
-        );
-      case 'troubleCodes':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Trouble Codes</h4>
-            <p className="text-sm">Active DTCs, Pending DTCs, etc.</p>
-          </div>
-        );
-      case 'disclaimer':
-        return (
-          <div className="bg-gray-100 p-2 mb-2 rounded">
-            <h4 className="font-semibold">Disclaimer</h4>
-            <p className="text-sm">Legal information and disclaimers</p>
-          </div>
-        );
-      default:
-        return null;
-    }
+    if (!activatedModules.includes(moduleName)) return null;
+
+    const moduleContent = {
+      carAndReportBasicInfo: {
+        title: "Car and Report Info",
+        content: "VIN, Make, Model, Year, etc."
+      },
+      compactOverview: {
+        title: "Compact Overview",
+        content: "Key diagnostic results"
+      },
+      safetyValues: {
+        title: "Safety Values",
+        content: "Insulation resistance, HV interlock, etc."
+      },
+      batteryValues: {
+        title: "Battery Values",
+        content: "SoC, SoH, Cell voltages, etc."
+      },
+      troubleCodes: {
+        title: "Trouble Codes",
+        content: "Active DTCs, Pending DTCs, etc."
+      },
+      disclaimer: {
+        title: "Disclaimer",
+        content: "Legal information and disclaimers"
+      },
+      guidedDisconnect: {
+        title: "Guided HV Disconnect",
+        content: "Step-by-step guide for HV system disconnection"
+      },
+      measurementResults: {
+        title: "Measurement Results",
+        content: "Detailed measurement data and analysis"
+      },
+      completedSteps: {
+        title: "Completed Steps",
+        content: "Overview of completed diagnostic steps"
+      }
+    };
+
+    const { title, content } = moduleContent[moduleName] || {};
+
+    return (
+      <Card key={moduleName} className="mb-4 shadow-sm">
+        <CardHeader className="py-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          <p className="text-xs text-muted-foreground">{content}</p>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (

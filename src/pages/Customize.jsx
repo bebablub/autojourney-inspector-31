@@ -17,9 +17,10 @@ const Customize = () => {
     logo: null,
     primaryColor: '#000000',
     secondaryColor: '#ffffff',
-    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer']
+    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer', 'guidedDisconnect', 'measurementResults', 'completedSteps']
   });
   const [resultPresentation, setResultPresentation] = useState(['ui']);
+  const [activatedModules, setActivatedModules] = useState(['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer', 'guidedDisconnect']);
 
   const { incrementConfigSaves, configSaves } = useGame();
   const { toast } = useToast();
@@ -28,7 +29,8 @@ const Customize = () => {
     console.log('Saved configuration:', { 
       diagnosticStartPoint, 
       protocolDesign,
-      resultPresentation 
+      resultPresentation,
+      activatedModules
     });
     incrementConfigSaves();
 
@@ -61,7 +63,7 @@ const Customize = () => {
       case 'startPoint':
         return <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />;
       case 'protocolDesign':
-        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} />;
+        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} activatedModules={activatedModules} />;
       case 'hvModule':
         return <HVCheckConfig design={protocolDesign} />;
       case 'manipulationModule':
