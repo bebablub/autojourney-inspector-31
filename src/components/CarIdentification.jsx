@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2 } from 'lucide-react';
 import CelebrationPopup from './CelebrationPopup';
 import { useVehicle } from '../contexts/VehicleContext';
+import { motion } from 'framer-motion';
 
 const CarIdentification = () => {
   const [stage, setStage] = useState('identifying');
   const [progress, setProgress] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
   const navigate = useNavigate();
-  const { setVehicleInfo } = useVehicle();
+  const { setVehicleInfo, vehicleInfo } = useVehicle();
 
   const stages = [
     { id: 'identifying', steps: [
@@ -69,7 +70,7 @@ const CarIdentification = () => {
   }, []);
 
   const handleContinue = () => {
-    navigate('/report');
+    navigate('/reports');
   };
 
   const handleCloseCelebration = () => {
@@ -89,9 +90,14 @@ const CarIdentification = () => {
           {stage !== 'complete' ? (
             <div className="flex flex-col items-center">
               <Loader2 className="h-8 w-8 animate-spin mb-4" />
-              <div className="h-16 flex items-center justify-center">
+              <motion.div 
+                className="h-16 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
                 <p className="text-center mb-2">{getCurrentStage().steps[Math.floor((progress / 100) * getCurrentStage().steps.length)]}</p>
-              </div>
+              </motion.div>
               <div className="w-full bg-secondary rounded-full h-2.5 dark:bg-secondary">
                 <div className="bg-primary h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
               </div>
@@ -108,7 +114,7 @@ const CarIdentification = () => {
         isOpen={showCelebration}
         onClose={handleCloseCelebration}
         onShowMe={handleContinue}
-        message="Your vehicle report is ready!"
+        message={`Your vehicle report for ${vehicleInfo?.make} ${vehicleInfo?.model} (${vehicleInfo?.year}) is ready!`}
       />
     </div>
   );

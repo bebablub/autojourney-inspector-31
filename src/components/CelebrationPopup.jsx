@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import confetti from 'canvas-confetti';
 
-const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
+const CelebrationPopup = ({ isOpen, onClose, onShowMe, message }) => {
   useEffect(() => {
     if (isOpen) {
       confetti({
@@ -19,13 +19,19 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
         >
-          <div className="bg-background rounded-lg p-8 shadow-xl relative max-w-md w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="bg-background rounded-lg p-8 shadow-xl relative max-w-md w-full"
+          >
             <Button
               variant="ghost"
               size="icon"
@@ -55,7 +61,7 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
               animate={{ y: 0, opacity: 1 }}
               className="text-center text-muted-foreground mb-6"
             >
-              Great job! Your Report is complete and ready for review. You're taking important steps to ensure the safety and performance of your vehicle.
+              {message}
             </motion.p>
             <motion.div
               initial={{ y: 20, opacity: 0 }}
@@ -65,7 +71,7 @@ const CelebrationPopup = ({ isOpen, onClose, onShowMe }) => {
               <Button onClick={onClose} variant="outline">Close</Button>
               <Button onClick={onShowMe} variant="default">View Report</Button>
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
