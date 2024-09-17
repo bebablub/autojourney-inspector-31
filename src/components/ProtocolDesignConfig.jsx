@@ -1,10 +1,14 @@
-import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, { useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import PDFPreview from './PDFPreview';
 
 const SortableItem = ({ id, children }) => {
@@ -23,6 +27,8 @@ const SortableItem = ({ id, children }) => {
 };
 
 const ProtocolDesignConfig = ({ design, setDesign, activatedModules }) => {
+  const [activeTab, setActiveTab] = useState('hvCheck');
+  const { toast } = useToast();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -57,11 +63,133 @@ const ProtocolDesignConfig = ({ design, setDesign, activatedModules }) => {
     }
   };
 
+  const handleModuleChange = (moduleName) => {
+    setDesign(prev => ({
+      ...prev,
+      modules: {
+        ...prev.modules,
+        [moduleName]: {
+          ...prev.modules[moduleName],
+          active: !prev.modules[moduleName].active
+        }
+      }
+    }));
+  };
+
+  const handleValueChange = (moduleName, valueName) => {
+    setDesign(prev => ({
+      ...prev,
+      modules: {
+        ...prev.modules,
+        [moduleName]: {
+          ...prev.modules[moduleName],
+          values: {
+            ...prev.modules[moduleName].values,
+            [valueName]: !prev.modules[moduleName].values[valueName]
+          }
+        }
+      }
+    }));
+  };
+
+  const handleCustomValueAdd = (moduleName) => {
+    const customValue = document.getElementById(`${moduleName}-customValue`).value;
+    if (customValue) {
+      setDesign(prev => ({
+        ...prev,
+        modules: {
+          ...prev.modules,
+          [moduleName]: {
+            ...prev.modules[moduleName],
+            values: {
+              ...prev.modules[moduleName].values,
+              [customValue]: true
+            }
+          }
+        }
+      }));
+      document.getElementById(`${moduleName}-customValue`).value = '';
+    }
+  };
+
+  const handleOverviewLogicChange = (e) => {
+    setDesign(prev => ({
+      ...prev,
+      overviewLogic: e.target.value
+    }));
+  };
+
+  const renderModuleConfig = (moduleName) => {
+    const module = design.modules[moduleName];
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id={`module-${moduleName}`}
+            checked={module.active}
+            onCheckedChange={() => handleModuleChange(moduleName)}
+          />
+          <Label htmlFor={`module-${moduleName}`}>{module.title}</Label>
+        </div>
+        {module.active && (
+          <div className="ml-6 space-y-2">
+            {Object.entries(module.values).map(([key, value]) => (
+              <div key={key} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`${moduleName}-${key}`}
+                  checked={value}
+                  onCheckedChange={() => handleValueChange(moduleName, key)}
+                />
+                <Label htmlFor={`${moduleName}-${key}`}>{key}</Label>
+              </div>
+            ))}
+            <div className="flex items-center space-x-2">
+              <Input
+                id={`${moduleName}-customValue`}
+                placeholder="Add custom value"
+              />
+              <Button onClick={() => handleCustomValueAdd(moduleName)}>Add</Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <Card className="w-full md:w-1/2 p-4">
         <CardContent>
-          <div className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="hvCheck">HV-Check</TabsTrigger>
+              <TabsTrigger value="evaluate">Evaluate</TabsTrigger>
+              <TabsTrigger value="workSafeGuided">WorkSafe Guided</TabsTrigger>
+              <TabsTrigger value="mileageCheck">Mileage Check</TabsTrigger>
+            </TabsList>
+            <TabsContent value="hvCheck">
+              {renderModuleConfig('hvCheck')}
+            </TabsContent>
+            <TabsContent value="evaluate">
+              {renderModuleConfig('evaluate')}
+            </TabsContent>
+            <TabsContent value="workSafeGuided">
+              {renderModuleConfig('workSafeGuided')}
+            </TabsContent>
+            <TabsContent value="mileageCheck">
+              {renderModuleConfig('mileageCheck')}
+            </TabsContent>
+          </Tabs>
+          <div className="mt-6 space-y-4">
+            <div>
+              <Label htmlFor="overviewLogic">Configure Overview Logic</Label>
+              <Input
+                id="overviewLogic"
+                placeholder="Enter logic for overview generation (e.g., SoC > 80% && InsulationResistance > 100 kΩ)"
+                value={design.overviewLogic}
+                onChange={handleOverviewLogicChange}
+              />
+            </div>
             <div>
               <Label htmlFor="logo">Upload Logo</Label>
               <Input id="logo" type="file" onChange={handleLogoChange} accept="image/*" />
@@ -90,7 +218,7 @@ const ProtocolDesignConfig = ({ design, setDesign, activatedModules }) => {
                 <SortableContext items={design.moduleOrder} strategy={verticalListSortingStrategy}>
                   {design.moduleOrder.map((key) => (
                     <SortableItem key={key} id={key}>
-                      {key.split(/(?=[A-Z])/).join(" ")}
+                      {design.modules[key].title}
                     </SortableItem>
                   ))}
                 </SortableContext>
