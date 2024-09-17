@@ -1,96 +1,83 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import ModuleSelection from './ModuleSelection';
+import ValueSectionDropdown from './ValueSectionDropdown';
+import CarReportInfoConfig from './CarReportInfoConfig';
+import OverviewLogicConfig from './OverviewLogicConfig';
+import PDFPreview from './PDFPreview';
 
-const HVCheckConfig = () => {
-  const [config, setConfig] = useState({
-    testData: {
-      date: true,
-      protocolNumber: true
-    },
-    vehicleData: {
-      make: true,
-      model: true,
-      mileage: true,
-      vin: true
-    },
-    safetyIndicators: {
-      isolationResistances: true,
-      hvSystem: true
-    },
-    batteryInformation: {
-      controllerData: true,
-      temperatures: true
-    },
-    errorCodes: true
+const HVCheckConfig = ({ design }) => {
+  const [selectedModules, setSelectedModules] = useState({
+    carAndReportBasicInfo: true,
+    compactOverview: true,
+    safetyValues: true,
+    batteryValues: true,
+    troubleCodes: true,
+    disclaimer: true
   });
-
-  const handleConfigChange = (section, item) => {
-    setConfig(prevConfig => ({
-      ...prevConfig,
-      [section]: typeof prevConfig[section] === 'object'
-        ? { ...prevConfig[section], [item]: !prevConfig[section][item] }
-        : !prevConfig[section]
-    }));
-  };
-
-  const renderCheckboxes = (section, items) => (
-    <div className="space-y-2">
-      {Object.entries(items).map(([key, value]) => (
-        <div key={key} className="flex items-center space-x-2">
-          <Checkbox
-            id={`${section}-${key}`}
-            checked={value}
-            onCheckedChange={() => handleConfigChange(section, key)}
-          />
-          <Label htmlFor={`${section}-${key}`}>{key}</Label>
-        </div>
-      ))}
-    </div>
-  );
+  const [overviewLogic, setOverviewLogic] = useState('');
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>HV-Check Configuration</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="testData">
-          <TabsList>
-            <TabsTrigger value="testData">Test Data</TabsTrigger>
-            <TabsTrigger value="vehicleData">Vehicle Data</TabsTrigger>
-            <TabsTrigger value="safetyIndicators">Safety Indicators</TabsTrigger>
-            <TabsTrigger value="batteryInformation">Battery Information</TabsTrigger>
-            <TabsTrigger value="errorCodes">Error Codes</TabsTrigger>
+    <div className="flex space-x-4">
+      <div className="w-1/2">
+        <Tabs defaultValue="modules" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="modules">Modules</TabsTrigger>
+            <TabsTrigger value="values">Values</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
           </TabsList>
-          <TabsContent value="testData">
-            {renderCheckboxes('testData', config.testData)}
+          <TabsContent value="modules">
+            <ModuleSelection selectedModules={selectedModules} setSelectedModules={setSelectedModules} />
+            {selectedModules.carAndReportBasicInfo && <CarReportInfoConfig />}
           </TabsContent>
-          <TabsContent value="vehicleData">
-            {renderCheckboxes('vehicleData', config.vehicleData)}
-          </TabsContent>
-          <TabsContent value="safetyIndicators">
-            {renderCheckboxes('safetyIndicators', config.safetyIndicators)}
-          </TabsContent>
-          <TabsContent value="batteryInformation">
-            {renderCheckboxes('batteryInformation', config.batteryInformation)}
-          </TabsContent>
-          <TabsContent value="errorCodes">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="errorCodes"
-                checked={config.errorCodes}
-                onCheckedChange={() => handleConfigChange('errorCodes')}
+          <TabsContent value="values">
+            {selectedModules.safetyValues && (
+              <ValueSectionDropdown 
+                title="Safety Values" 
+                defaultValues={[
+                  'Insulation resistance',
+                  'HV interlock',
+                  'Isolation monitoring',
+                  'Potential equalization',
+                  'HV system status'
+                ]}
               />
-              <Label htmlFor="errorCodes">Include Error Codes</Label>
-            </div>
+            )}
+            {selectedModules.batteryValues && (
+              <ValueSectionDropdown 
+                title="Battery Values" 
+                defaultValues={[
+                  'State of Charge (SoC)',
+                  'State of Health (SoH)',
+                  'Cell voltages',
+                  'Temperature distribution',
+                  'Capacity',
+                  'Internal resistance'
+                ]}
+              />
+            )}
+            {selectedModules.troubleCodes && (
+              <ValueSectionDropdown 
+                title="Trouble Codes" 
+                defaultValues={[
+                  'Active DTCs',
+                  'Pending DTCs',
+                  'Permanent DTCs',
+                  'DTC description',
+                  'Freeze frame data'
+                ]}
+              />
+            )}
+          </TabsContent>
+          <TabsContent value="overview">
+            <OverviewLogicConfig overviewLogic={overviewLogic} setOverviewLogic={setOverviewLogic} />
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+      <div className="w-1/2">
+        <PDFPreview design={design} selectedModules={selectedModules} />
+      </div>
+    </div>
   );
 };
 
