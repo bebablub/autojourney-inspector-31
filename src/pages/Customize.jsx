@@ -6,8 +6,9 @@ import { useToast } from "@/components/ui/use-toast";
 import DiagnosticStartPointConfig from '../components/DiagnosticStartPointConfig';
 import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
+import ModuleCard from '../components/ModuleCard';
 import { motion } from 'framer-motion';
-import { Settings2Icon, FileTextIcon, EyeIcon } from 'lucide-react';
+import { Settings2Icon, FileTextIcon, EyeIcon, BatteryChargingIcon, ActivityIcon, ShieldCheckIcon, SpeedometerIcon } from 'lucide-react';
 
 const Customize = () => {
   const [activeConfig, setActiveConfig] = useState(null);
@@ -96,6 +97,13 @@ const Customize = () => {
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented', icon: EyeIcon },
   ];
 
+  const modules = [
+    { id: 'hvCheck', title: 'HV-Check', description: 'High Voltage system check', icon: BatteryChargingIcon, active: true },
+    { id: 'evaluate', title: 'Evaluate', description: 'Overall vehicle evaluation', icon: ActivityIcon, active: true },
+    { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Guided safety procedures', icon: ShieldCheckIcon, active: true },
+    { id: 'mileageCheck', title: 'Mileage Check', description: 'Vehicle mileage verification', icon: SpeedometerIcon, active: true },
+  ];
+
   const renderConfigContent = () => {
     switch (activeConfig) {
       case 'startPoint':
@@ -140,6 +148,18 @@ const Customize = () => {
                   </CardHeader>
                 </Card>
               </motion.div>
+            ))}
+          </div>
+          <h2 className="text-2xl font-semibold mb-4">Modules</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {modules.map((module) => (
+              <ModuleCard
+                key={module.id}
+                title={module.title}
+                description={module.description}
+                icon={module.icon}
+                active={module.active}
+              />
             ))}
           </div>
         </>
