@@ -51,10 +51,10 @@ const Customize = () => {
     { id: 'startPoint', title: 'Diagnostic Starting Point', description: 'Configure how the diagnostic session is initiated', icon: Settings2Icon },
     { id: 'protocolDesign', title: 'Protocol Design', description: 'Customize the style, logo, and module order of your protocol', icon: FileTextIcon },
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented', icon: EyeIcon },
-    { id: 'hvCheck', title: 'HV-Check', description: 'Configure the HV-Check protocol', icon: ZapIcon },
   ];
 
   const moduleOptions = [
+    { id: 'hvCheck', title: 'HV-Check', description: 'Configure the HV-Check protocol', icon: ZapIcon, active: true },
     { id: 'evaluate', title: 'Evaluate', description: 'Advanced vehicle evaluation and analysis', icon: ActivityIcon, active: true },
     { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Step-by-step safety procedures for technicians', icon: ClipboardCheckIcon, active: true },
     { id: 'guidedDisconnect', title: 'Guided Disconnect', description: 'Safe high-voltage system disconnection guide', icon: CarIcon, active: false },
@@ -75,7 +75,7 @@ const Customize = () => {
       case 'visualization':
         return <VisualizationConfig presentation={resultPresentation} setPresentation={setResultPresentation} />;
       case 'hvCheck':
-        return <HVCheckConfig design={protocolDesign} />;
+        return <HVCheckConfig />;
       default:
         const module = moduleOptions.find(m => m.id === activeConfig);
         if (module) {
@@ -113,7 +113,7 @@ const Customize = () => {
       ) : (
         <>
           <h2 className="text-2xl font-semibold mb-4">Base Configuration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {baseConfigOptions.map((option) => (
               <motion.div
                 key={option.id}
@@ -122,7 +122,7 @@ const Customize = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-shadow" 
+                  className="cursor-pointer hover:shadow-lg transition-shadow dark:bg-gray-800" 
                   onClick={() => setActiveConfig(option.id)}
                 >
                   <CardHeader>
@@ -145,7 +145,7 @@ const Customize = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Card 
-                  className={`cursor-pointer hover:shadow-lg transition-shadow ${option.active ? '' : 'opacity-70'}`}
+                  className={`cursor-pointer hover:shadow-lg transition-shadow dark:bg-gray-800 ${option.active ? '' : 'opacity-70'}`}
                   onClick={() => setActiveConfig(option.id)}
                 >
                   <CardHeader>

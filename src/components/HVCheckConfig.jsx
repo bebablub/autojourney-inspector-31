@@ -6,7 +6,7 @@ import CarReportInfoConfig from './CarReportInfoConfig';
 import OverviewLogicConfig from './OverviewLogicConfig';
 import PDFPreview from './PDFPreview';
 
-const HVCheckConfig = ({ design }) => {
+const HVCheckConfig = () => {
   const [selectedModules, setSelectedModules] = useState({
     carAndReportBasicInfo: true,
     compactOverview: true,
@@ -16,10 +16,20 @@ const HVCheckConfig = ({ design }) => {
     disclaimer: true
   });
   const [overviewLogic, setOverviewLogic] = useState('');
+  const [safetyValues, setSafetyValues] = useState([]);
+  const [batteryValues, setBatteryValues] = useState([]);
+  const [troubleCodes, setTroubleCodes] = useState([]);
+
+  const design = {
+    logo: null,
+    primaryColor: '#000000',
+    secondaryColor: '#ffffff',
+    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer']
+  };
 
   return (
-    <div className="flex space-x-4">
-      <div className="w-1/2">
+    <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
+      <div className="w-full lg:w-1/2">
         <Tabs defaultValue="modules" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="modules">Modules</TabsTrigger>
@@ -41,6 +51,8 @@ const HVCheckConfig = ({ design }) => {
                   'Potential equalization',
                   'HV system status'
                 ]}
+                selectedValues={safetyValues}
+                setSelectedValues={setSafetyValues}
               />
             )}
             {selectedModules.batteryValues && (
@@ -54,6 +66,8 @@ const HVCheckConfig = ({ design }) => {
                   'Capacity',
                   'Internal resistance'
                 ]}
+                selectedValues={batteryValues}
+                setSelectedValues={setBatteryValues}
               />
             )}
             {selectedModules.troubleCodes && (
@@ -66,6 +80,8 @@ const HVCheckConfig = ({ design }) => {
                   'DTC description',
                   'Freeze frame data'
                 ]}
+                selectedValues={troubleCodes}
+                setSelectedValues={setTroubleCodes}
               />
             )}
           </TabsContent>
@@ -74,8 +90,8 @@ const HVCheckConfig = ({ design }) => {
           </TabsContent>
         </Tabs>
       </div>
-      <div className="w-1/2">
-        <PDFPreview design={design} selectedModules={selectedModules} />
+      <div className="w-full lg:w-1/2">
+        <PDFPreview design={design} selectedModules={Object.keys(selectedModules).filter(key => selectedModules[key])} />
       </div>
     </div>
   );
