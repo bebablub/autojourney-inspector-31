@@ -8,7 +8,7 @@ import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
 import ModuleCard from '../components/ModuleCard';
 import { motion } from 'framer-motion';
-import { Settings2Icon, FileTextIcon, EyeIcon, ZapIcon, ActivityIcon, CarIcon, ClipboardCheckIcon, AlertTriangleIcon, CodeIcon, ClockIcon, RulerIcon, HashIcon } from 'lucide-react';
+import { Settings2Icon, FileTextIcon, EyeIcon, ZapIcon, ActivityIcon, CarIcon, ClipboardCheckIcon, AlertTriangleIcon, CodeIcon, ClockIcon, RulerIcon, HashIcon, WrenchIcon } from 'lucide-react';
 
 const Customize = () => {
   const [activeConfig, setActiveConfig] = useState(null);
