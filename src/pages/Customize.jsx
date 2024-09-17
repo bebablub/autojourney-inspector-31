@@ -89,6 +89,16 @@ const Customize = () => {
     }
   };
 
+  const purchaseUrls = [
+    'https://experience.avl.com/?redirect=false',
+    'https://ditest.shop/',
+    'https://my.avlditest.com/'
+  ];
+
+  const getRandomPurchaseUrl = () => {
+    return purchaseUrls[Math.floor(Math.random() * purchaseUrls.length)];
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Customize Diagnostics</h1>
@@ -134,7 +144,7 @@ const Customize = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Card 
-                  className={`cursor-pointer hover:shadow-lg transition-shadow ${option.active ? '' : 'opacity-50'}`}
+                  className={`cursor-pointer hover:shadow-lg transition-shadow ${option.active ? '' : 'opacity-70'}`}
                   onClick={() => setActiveConfig(option.id)}
                 >
                   <CardHeader>
@@ -142,6 +152,21 @@ const Customize = () => {
                     <CardTitle>{option.title}</CardTitle>
                     <CardDescription>{option.description}</CardDescription>
                   </CardHeader>
+                  <CardContent>
+                    {option.active ? (
+                      <Button variant="outline" className="w-full">Configure</Button>
+                    ) : (
+                      <Button 
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(getRandomPurchaseUrl(), '_blank');
+                        }}
+                      >
+                        Purchase Module
+                      </Button>
+                    )}
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
