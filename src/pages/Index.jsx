@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRightIcon, SettingsIcon, PlayIcon, FileTextIcon } from 'lucide-react';
+import { ArrowRightIcon, ActivityIcon, Settings2Icon, FileTextIcon, WrenchIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const FeatureCard = ({ icon: Icon, title, description, linkTo }) => {
@@ -16,7 +16,7 @@ const FeatureCard = ({ icon: Icon, title, description, linkTo }) => {
     >
       <Card className="flex flex-col justify-between h-full transition-all duration-300 hover:shadow-lg bg-card text-card-foreground cursor-pointer" onClick={() => navigate(linkTo)}>
         <CardHeader>
-          <Icon className="w-10 h-10 mb-2 text-primary" />
+          <Icon className="w-12 h-12 mb-2 text-primary" />
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
@@ -37,26 +37,29 @@ const Index = () => {
   return (
     <div className="space-y-8">
       <div className="text-center pt-8">
+        <div className="flex justify-center mb-6">
+          <ActivityIcon className="w-24 h-24 text-primary" />
+        </div>
         <h1 className="text-4xl font-bold mb-4">Welcome to HV-Check Diagnostic Tool</h1>
         <p className="text-xl text-muted-foreground mb-8">
           Empower your automotive diagnostics with our comprehensive tool for modern vehicles.
         </p>
-        <Button size="lg" onClick={() => navigate('/car-identification')} className="mb-8">
+        <Button size="lg" onClick={() => navigate('/start-check')} className="mb-8">
           Start AI-Powered Vehicle Check
         </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
         <FeatureCard
-          icon={SettingsIcon}
+          icon={Settings2Icon}
           title="Customize HV-Check"
           description="Configure modules and parameters for your specific diagnostic needs."
           linkTo="/customize"
         />
         <FeatureCard
-          icon={PlayIcon}
+          icon={WrenchIcon}
           title="Start HV-Check"
           description="Begin a new high-voltage check with your customized settings."
-          linkTo="/car-identification"
+          linkTo="/start-check"
         />
         <FeatureCard
           icon={FileTextIcon}
