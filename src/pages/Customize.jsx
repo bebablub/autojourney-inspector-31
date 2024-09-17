@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import DiagnosticStartPointConfig from '../components/DiagnosticStartPointConfig';
 import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
+import HVCheckConfig from '../components/HVCheckConfig';
 import ModuleCard from '../components/ModuleCard';
 import { motion } from 'framer-motion';
 import { Settings2Icon, FileTextIcon, EyeIcon, ZapIcon, ActivityIcon, CarIcon, ClipboardCheckIcon, AlertTriangleIcon, CodeIcon, ClockIcon, RulerIcon, HashIcon, WrenchIcon } from 'lucide-react';
@@ -17,10 +18,9 @@ const Customize = () => {
     logo: null,
     primaryColor: '#000000',
     secondaryColor: '#ffffff',
-    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer', 'guidedDisconnect', 'measurementResults', 'completedSteps']
+    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer']
   });
   const [resultPresentation, setResultPresentation] = useState(['ui']);
-  const [activatedModules, setActivatedModules] = useState(['HV-Check', 'Evaluate', 'workSafe Guided', 'Mileage Check']);
 
   const { incrementConfigSaves, configSaves } = useGame();
   const { toast } = useToast();
@@ -29,8 +29,7 @@ const Customize = () => {
     console.log('Saved configuration:', { 
       diagnosticStartPoint, 
       protocolDesign,
-      resultPresentation,
-      activatedModules
+      resultPresentation
     });
     incrementConfigSaves();
 
@@ -52,10 +51,10 @@ const Customize = () => {
     { id: 'startPoint', title: 'Diagnostic Starting Point', description: 'Configure how the diagnostic session is initiated', icon: Settings2Icon },
     { id: 'protocolDesign', title: 'Protocol Design', description: 'Customize the style, logo, and module order of your protocol', icon: FileTextIcon },
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented', icon: EyeIcon },
+    { id: 'hvCheck', title: 'HV-Check', description: 'Configure the HV-Check protocol', icon: ZapIcon },
   ];
 
   const moduleOptions = [
-    { id: 'hvCheck', title: 'HV-Check', description: 'Comprehensive high-voltage system diagnostics', icon: ZapIcon, active: true },
     { id: 'evaluate', title: 'Evaluate', description: 'Advanced vehicle evaluation and analysis', icon: ActivityIcon, active: true },
     { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Step-by-step safety procedures for technicians', icon: ClipboardCheckIcon, active: true },
     { id: 'guidedDisconnect', title: 'Guided Disconnect', description: 'Safe high-voltage system disconnection guide', icon: CarIcon, active: false },
@@ -72,9 +71,11 @@ const Customize = () => {
       case 'startPoint':
         return <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />;
       case 'protocolDesign':
-        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} activatedModules={activatedModules} />;
+        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} />;
       case 'visualization':
         return <VisualizationConfig presentation={resultPresentation} setPresentation={setResultPresentation} />;
+      case 'hvCheck':
+        return <HVCheckConfig design={protocolDesign} />;
       default:
         const module = moduleOptions.find(m => m.id === activeConfig);
         if (module) {
@@ -112,7 +113,7 @@ const Customize = () => {
       ) : (
         <>
           <h2 className="text-2xl font-semibold mb-4">Base Configuration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {baseConfigOptions.map((option) => (
               <motion.div
                 key={option.id}
@@ -135,7 +136,7 @@ const Customize = () => {
           </div>
           
           <h2 className="text-2xl font-semibold mb-4">Modules</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {moduleOptions.map((option) => (
               <motion.div
                 key={option.id}
