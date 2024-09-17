@@ -4,15 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-const purchaseLinks = [
-  "https://experience.avl.com/?redirect=false",
-  "https://ditest.shop/",
-  "https://my.avlditest.com/",
-];
-
 const ModuleCard = ({ title, description, icon: Icon, active }) => {
-  const purchaseLink = purchaseLinks[Math.floor(Math.random() * purchaseLinks.length)];
-
   return (
     <Card className={`mb-6 ${active ? '' : 'opacity-70'}`}>
       <CardHeader>
@@ -44,9 +36,7 @@ const ModuleCard = ({ title, description, icon: Icon, active }) => {
             </div>
           </div>
         ) : (
-          <Button className="mt-4" onClick={() => window.open(purchaseLink, '_blank')}>
-            Purchase Module
-          </Button>
+          <Button className="mt-4">Purchase Module</Button>
         )}
       </CardContent>
     </Card>

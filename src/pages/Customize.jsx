@@ -8,7 +8,7 @@ import ProtocolDesignConfig from '../components/ProtocolDesignConfig';
 import VisualizationConfig from '../components/VisualizationConfig';
 import ModuleCard from '../components/ModuleCard';
 import { motion } from 'framer-motion';
-import { Settings2Icon, FileTextIcon, EyeIcon, BatteryChargingIcon, ActivityIcon, ShieldCheckIcon, GaugeIcon } from 'lucide-react';
+import { Settings2Icon, FileTextIcon, EyeIcon, ZapIcon, ActivityIcon, CarIcon, ClipboardCheckIcon, AlertTriangleIcon, CodeIcon, ClockIcon, RulerIcon, HashIcon, WrenchIcon } from 'lucide-react';
 
 const Customize = () => {
   const [activeConfig, setActiveConfig] = useState(null);
@@ -17,54 +17,10 @@ const Customize = () => {
     logo: null,
     primaryColor: '#000000',
     secondaryColor: '#ffffff',
-    moduleOrder: ['hvCheck', 'evaluate', 'workSafeGuided', 'mileageCheck'],
-    modules: {
-      hvCheck: {
-        title: "HV-Check",
-        active: true,
-        values: {
-          "State of Charge (SoC)": true,
-          "State of Health (SoH)": true,
-          "Cell voltages": true,
-          "Temperature distribution": true,
-          "Capacity": true,
-          "Internal resistance": true
-        }
-      },
-      evaluate: {
-        title: "Evaluate",
-        active: true,
-        values: {
-          "Overall condition": true,
-          "Battery health": true,
-          "Maintenance history": true,
-          "Performance metrics": true
-        }
-      },
-      workSafeGuided: {
-        title: "workSafe Guided",
-        active: true,
-        values: {
-          "Safety steps completed": true,
-          "Personal protective equipment": true,
-          "HV system deactivation": true,
-          "Voltage-free state verification": true
-        }
-      },
-      mileageCheck: {
-        title: "Mileage Check",
-        active: true,
-        values: {
-          "Current mileage": true,
-          "Last known mileage": true,
-          "Average monthly mileage": true,
-          "Mileage plausibility": true
-        }
-      }
-    },
-    overviewLogic: "SoC > 80% && InsulationResistance > 100 kΩ"
+    moduleOrder: ['carAndReportBasicInfo', 'compactOverview', 'safetyValues', 'batteryValues', 'troubleCodes', 'disclaimer', 'guidedDisconnect', 'measurementResults', 'completedSteps']
   });
   const [resultPresentation, setResultPresentation] = useState(['ui']);
+  const [activatedModules, setActivatedModules] = useState(['HV-Check', 'Evaluate', 'workSafe Guided', 'Mileage Check']);
 
   const { incrementConfigSaves, configSaves } = useGame();
   const { toast } = useToast();
@@ -73,7 +29,8 @@ const Customize = () => {
     console.log('Saved configuration:', { 
       diagnosticStartPoint, 
       protocolDesign,
-      resultPresentation
+      resultPresentation,
+      activatedModules
     });
     incrementConfigSaves();
 
@@ -97,11 +54,17 @@ const Customize = () => {
     { id: 'visualization', title: 'Visualization', description: 'Choose and configure how results are presented', icon: EyeIcon },
   ];
 
-  const modules = [
-    { id: 'hvCheck', title: 'HV-Check', description: 'High Voltage system check', icon: BatteryChargingIcon, active: true },
-    { id: 'evaluate', title: 'Evaluate', description: 'Overall vehicle evaluation', icon: ActivityIcon, active: true },
-    { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Guided safety procedures', icon: ShieldCheckIcon, active: true },
-    { id: 'mileageCheck', title: 'Mileage Check', description: 'Vehicle mileage verification', icon: GaugeIcon, active: true },
+  const moduleOptions = [
+    { id: 'hvCheck', title: 'HV-Check', description: 'Comprehensive high-voltage system diagnostics', icon: ZapIcon, active: true },
+    { id: 'evaluate', title: 'Evaluate', description: 'Advanced vehicle evaluation and analysis', icon: ActivityIcon, active: true },
+    { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Step-by-step safety procedures for technicians', icon: ClipboardCheckIcon, active: true },
+    { id: 'guidedDisconnect', title: 'Guided Disconnect', description: 'Safe high-voltage system disconnection guide', icon: CarIcon, active: false },
+    { id: 'maintenanceCheck', title: 'Maintenance Check', description: 'Routine vehicle maintenance diagnostics', icon: WrenchIcon, active: false },
+    { id: 'crashCheck', title: 'Crash Check', description: 'Post-accident vehicle analysis', icon: AlertTriangleIcon, active: false },
+    { id: 'troubleCodeCheck', title: 'Trouble Code Check', description: 'Comprehensive DTC analysis', icon: CodeIcon, active: false },
+    { id: 'timePlausibilityCheck', title: 'Time Plausibility Check', description: 'Verify time-based vehicle data', icon: ClockIcon, active: false },
+    { id: 'mileageCheck', title: 'Mileage Check', description: 'Odometer and mileage verification', icon: RulerIcon, active: true },
+    { id: 'vinCheck', title: 'VIN Check', description: 'Vehicle Identification Number verification', icon: HashIcon, active: false },
   ];
 
   const renderConfigContent = () => {
@@ -109,17 +72,26 @@ const Customize = () => {
       case 'startPoint':
         return <DiagnosticStartPointConfig startPoint={diagnosticStartPoint} setStartPoint={setDiagnosticStartPoint} />;
       case 'protocolDesign':
-        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} activatedModules={Object.keys(protocolDesign.modules).filter(key => protocolDesign.modules[key].active)} />;
+        return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} activatedModules={activatedModules} />;
       case 'visualization':
         return <VisualizationConfig presentation={resultPresentation} setPresentation={setResultPresentation} />;
       default:
+        const module = moduleOptions.find(m => m.id === activeConfig);
+        if (module) {
+          return <ModuleCard 
+            title={module.title}
+            description={module.description}
+            icon={module.icon}
+            active={module.active}
+          />;
+        }
         return null;
     }
   };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Customize HV-Check</h1>
+      <h1 className="text-3xl font-bold">Customize Diagnostics</h1>
       
       {activeConfig ? (
         <>
@@ -129,6 +101,7 @@ const Customize = () => {
         </>
       ) : (
         <>
+          <h2 className="text-2xl font-semibold mb-4">Base Configuration</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {baseConfigOptions.map((option) => (
               <motion.div
@@ -150,16 +123,27 @@ const Customize = () => {
               </motion.div>
             ))}
           </div>
+          
           <h2 className="text-2xl font-semibold mb-4">Modules</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {modules.map((module) => (
-              <ModuleCard
-                key={module.id}
-                title={module.title}
-                description={module.description}
-                icon={module.icon}
-                active={module.active}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {moduleOptions.map((option) => (
+              <motion.div
+                key={option.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Card 
+                  className={`cursor-pointer hover:shadow-lg transition-shadow ${option.active ? '' : 'opacity-50'}`}
+                  onClick={() => setActiveConfig(option.id)}
+                >
+                  <CardHeader>
+                    <option.icon className="w-8 h-8 mb-2 text-primary" />
+                    <CardTitle>{option.title}</CardTitle>
+                    <CardDescription>{option.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </>
