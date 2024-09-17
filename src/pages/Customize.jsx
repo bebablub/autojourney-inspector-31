@@ -9,6 +9,7 @@ import VisualizationConfig from '../components/VisualizationConfig';
 import ModuleCard from '../components/ModuleCard';
 import { motion } from 'framer-motion';
 import { Settings2Icon, FileTextIcon, EyeIcon, BatteryChargingIcon, ActivityIcon, ShieldCheckIcon, GaugeIcon } from 'lucide-react';
+import HVCheckConfig from '../components/HVCheckConfig';
 
 const Customize = () => {
   const [activeConfig, setActiveConfig] = useState(null);
@@ -100,8 +101,8 @@ const Customize = () => {
   const modules = [
     { id: 'hvCheck', title: 'HV-Check', description: 'High Voltage system check', icon: BatteryChargingIcon, active: true },
     { id: 'evaluate', title: 'Evaluate', description: 'Overall vehicle evaluation', icon: ActivityIcon, active: true },
-    { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Guided safety procedures', icon: ShieldCheckIcon, active: true },
-    { id: 'mileageCheck', title: 'Mileage Check', description: 'Vehicle mileage verification', icon: GaugeIcon, active: true },
+    { id: 'workSafeGuided', title: 'workSafe Guided', description: 'Guided safety procedures', icon: ShieldCheckIcon, active: false },
+    { id: 'mileageCheck', title: 'Mileage Check', description: 'Vehicle mileage verification', icon: GaugeIcon, active: false },
   ];
 
   const renderConfigContent = () => {
@@ -112,6 +113,8 @@ const Customize = () => {
         return <ProtocolDesignConfig design={protocolDesign} setDesign={setProtocolDesign} activatedModules={Object.keys(protocolDesign.modules).filter(key => protocolDesign.modules[key].active)} />;
       case 'visualization':
         return <VisualizationConfig presentation={resultPresentation} setPresentation={setResultPresentation} />;
+      case 'hvCheck':
+        return <HVCheckConfig />;
       default:
         return null;
     }
