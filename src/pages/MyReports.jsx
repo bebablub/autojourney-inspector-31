@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useVehicle } from '../contexts/VehicleContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const MyReports = () => {
   const { vehicleInfo } = useVehicle();
@@ -24,32 +25,40 @@ const MyReports = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">My Reports</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Report ID</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Make</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allReports.map((report) => (
-            <TableRow key={report.id}>
-              <TableCell>{report.id}</TableCell>
-              <TableCell>{report.date}</TableCell>
-              <TableCell>{report.make}</TableCell>
-              <TableCell>{report.model}</TableCell>
-              <TableCell>{report.status}</TableCell>
-              <TableCell>
-                <Button variant="outline">View Report</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Card>
+        <CardHeader>
+          <CardTitle>HV-Check Reports</CardTitle>
+          <CardDescription>View and manage your diagnostic reports</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Report ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Make</TableHead>
+                <TableHead>Model</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allReports.map((report) => (
+                <TableRow key={report.id}>
+                  <TableCell>{report.id}</TableCell>
+                  <TableCell>{report.date}</TableCell>
+                  <TableCell>{report.make}</TableCell>
+                  <TableCell>{report.model}</TableCell>
+                  <TableCell>{report.status}</TableCell>
+                  <TableCell>
+                    <Button variant="outline">View Report</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

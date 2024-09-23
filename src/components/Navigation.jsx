@@ -36,7 +36,7 @@ const Navigation = () => {
             <Button variant="outline" onClick={toggleMode}>
               {isAdminMode ? 'Switch to User Mode' : 'Switch to Admin Mode'}
             </Button>
-            {isAdminMode ? (
+            {isAdminMode && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -49,22 +49,6 @@ const Navigation = () => {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>View Admin Dashboard</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link to="/user">
-                      <Button variant="outline">
-                        <WrenchIcon className="mr-2 h-4 w-4" />
-                        Start Check
-                      </Button>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Start a new diagnostic check</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
